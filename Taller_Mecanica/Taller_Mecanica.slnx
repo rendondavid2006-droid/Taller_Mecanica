@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="consola_aplicaciones/consola_aplicaciones.csproj" />
+  <Project Path="libreria_aplicaciones/libreria_aplicaciones.csproj" />
+  <Project Path="pruebas_unitarias/pruebas_unitarias.csproj" />
+</Solution>
