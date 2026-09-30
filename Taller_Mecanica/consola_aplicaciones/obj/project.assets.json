@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "targets": {
     "net10.0": {
       "Azure.Core/1.50.0": {
@@ -1747,23 +1747,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\EMMANUEL\\.nuget\\packages\\": {},
+    "C:\\Users\\rendo\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Software 2\\Taller_Mecanica\\Taller_Mecanica\\consola_aplicaciones\\consola_aplicaciones.csproj",
+      "projectUniqueName": "C:\\Users\\rendo\\Desktop\\Taller_Mecanica\\Taller_Mecanica\\consola_aplicaciones\\consola_aplicaciones.csproj",
       "projectName": "consola_aplicaciones",
-      "projectPath": "D:\\Software 2\\Taller_Mecanica\\Taller_Mecanica\\consola_aplicaciones\\consola_aplicaciones.csproj",
-      "packagesPath": "C:\\Users\\EMMANUEL\\.nuget\\packages\\",
-      "outputPath": "D:\\Software 2\\Taller_Mecanica\\Taller_Mecanica\\consola_aplicaciones\\obj\\",
+      "projectPath": "C:\\Users\\rendo\\Desktop\\Taller_Mecanica\\Taller_Mecanica\\consola_aplicaciones\\consola_aplicaciones.csproj",
+      "packagesPath": "C:\\Users\\rendo\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\rendo\\Desktop\\Taller_Mecanica\\Taller_Mecanica\\consola_aplicaciones\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\EMMANUEL\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\rendo\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -1772,7 +1772,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -1780,8 +1779,8 @@
           "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {
-            "D:\\Software 2\\Taller_Mecanica\\Taller_Mecanica\\libreria_aplicaciones\\libreria_aplicaciones.csproj": {
-              "projectPath": "D:\\Software 2\\Taller_Mecanica\\Taller_Mecanica\\libreria_aplicaciones\\libreria_aplicaciones.csproj"
+            "C:\\Users\\rendo\\Desktop\\Taller_Mecanica\\Taller_Mecanica\\libreria_aplicaciones\\libreria_aplicaciones.csproj": {
+              "projectPath": "C:\\Users\\rendo\\Desktop\\Taller_Mecanica\\Taller_Mecanica\\libreria_aplicaciones\\libreria_aplicaciones.csproj"
             }
           }
         }
@@ -1796,7 +1795,7 @@
         "auditLevel": "low",
         "auditMode": "all"
       },
-      "SdkAnalysisLevel": "10.0.200"
+      "SdkAnalysisLevel": "10.0.400"
     },
     "frameworks": {
       "net10.0": {
@@ -1818,7 +1817,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",
