@@ -1,0 +1,10 @@
+D:\Software 2\Taller_Mecanica\Taller_Mecanica\pruebas_unitarias\bin\Debug\net10.0\.msCoverageExtensionSourceRootsMapping_pruebas_unitarias
+D:\Software 2\Taller_Mecanica\Taller_Mecanica\pruebas_unitarias\bin\Debug\net10.0\.msCoverageSourceRootsMapping_pruebas_unitarias
+D:\Software 2\Taller_Mecanica\Taller_Mecanica\pruebas_unitarias\obj\Debug\net10.0\pruebas_unitarias.csproj.AssemblyReference.cache
+D:\Software 2\Taller_Mecanica\Taller_Mecanica\pruebas_unitarias\obj\Debug\net10.0\pruebas_unitarias.GeneratedMSBuildEditorConfig.editorconfig
+D:\Software 2\Taller_Mecanica\Taller_Mecanica\pruebas_unitarias\obj\Debug\net10.0\pruebas_unitarias.gentestingplatformentrypointinputcache.cache
+D:\Software 2\Taller_Mecanica\Taller_Mecanica\pruebas_unitarias\obj\Debug\net10.0\pruebas_unitarias.genautoregisteredextensionsinputcache.cache
+D:\Software 2\Taller_Mecanica\Taller_Mecanica\pruebas_unitarias\obj\Debug\net10.0\pruebas_unitarias.AssemblyInfoInputs.cache
+D:\Software 2\Taller_Mecanica\Taller_Mecanica\pruebas_unitarias\obj\Debug\net10.0\pruebas_unitarias.AssemblyInfo.cs
+D:\Software 2\Taller_Mecanica\Taller_Mecanica\pruebas_unitarias\obj\Debug\net10.0\pruebas_unitarias.csproj.CoreCompileInputs.cache
+D:\Software 2\Taller_Mecanica\Taller_Mecanica\pruebas_unitarias\obj\Debug\net10.0\pruebas_unitarias.sourcelink.json

@@ -1,0 +1,6 @@
+D:\Software 2\Taller_Mecanica\Taller_Mecanica\libreria_aplicaciones\obj\Debug\net10.0\libreria_aplicaciones.csproj.AssemblyReference.cache
+D:\Software 2\Taller_Mecanica\Taller_Mecanica\libreria_aplicaciones\obj\Debug\net10.0\libreria_aplicaciones.GeneratedMSBuildEditorConfig.editorconfig
+D:\Software 2\Taller_Mecanica\Taller_Mecanica\libreria_aplicaciones\obj\Debug\net10.0\libreria_aplicaciones.AssemblyInfoInputs.cache
+D:\Software 2\Taller_Mecanica\Taller_Mecanica\libreria_aplicaciones\obj\Debug\net10.0\libreria_aplicaciones.AssemblyInfo.cs
+D:\Software 2\Taller_Mecanica\Taller_Mecanica\libreria_aplicaciones\obj\Debug\net10.0\libreria_aplicaciones.csproj.CoreCompileInputs.cache
+D:\Software 2\Taller_Mecanica\Taller_Mecanica\libreria_aplicaciones\obj\Debug\net10.0\libreria_aplicaciones.sourcelink.json
