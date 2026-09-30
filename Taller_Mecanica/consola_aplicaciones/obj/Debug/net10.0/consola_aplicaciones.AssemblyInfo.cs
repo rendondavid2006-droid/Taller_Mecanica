@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("consola_aplicaciones")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6b6167ca4444c58299038718ece9f2f0bb423ea6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+40af00fa913007dfc2cfddf11319fbb1d20cb3f5")]
 [assembly: System.Reflection.AssemblyProductAttribute("consola_aplicaciones")]
 [assembly: System.Reflection.AssemblyTitleAttribute("consola_aplicaciones")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
