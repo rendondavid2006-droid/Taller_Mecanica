@@ -1,4 +1,4 @@
-﻿
+using System.Text.Json.Serialization;
 
 namespace libreria_aplicaciones.Entidades
 {
@@ -11,9 +11,10 @@ namespace libreria_aplicaciones.Entidades
         public decimal Precio_Venta { get; set; }
         public int Stock { get; set; }
         public int Stock_Minimo { get; set; }
+        public string? Imagen { get; set; }
 
-        public List<Detalles_Repuestos_Ordenes>? Detalles_Repuestos_Ordenes { get; set; }
-        public List<Detalles_Compras>? Detalles_Compras { get; set; }
+        [JsonIgnore] public List<Detalles_Repuestos_Ordenes>? Detalles_Repuestos_Ordenes { get; set; }
+        [JsonIgnore] public List<Detalles_Compras>? Detalles_Compras { get; set; }
 
     }
 }

@@ -1,4 +1,4 @@
-﻿
+using System.Text.Json.Serialization;
 
 namespace libreria_aplicaciones.Entidades
 {
@@ -10,6 +10,6 @@ namespace libreria_aplicaciones.Entidades
         public string? Descripcion { get; set; }
         public bool Estado { get; set; }
 
-        public List<Modelos_Vehiculos>? Modelos_Vehiculos { get; set; }
+        [JsonIgnore] public List<Modelos_Vehiculos>? Modelos_Vehiculos { get; set; }
     }
 }

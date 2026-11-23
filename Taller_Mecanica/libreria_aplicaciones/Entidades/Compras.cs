@@ -1,6 +1,5 @@
-﻿
-
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace libreria_aplicaciones.Entidades
 {
@@ -17,6 +16,6 @@ namespace libreria_aplicaciones.Entidades
 
         [ForeignKey("Proveedor")] public Proveedores? _Proveedor { get; set; }
 
-        public List<Detalles_Compras>? Detalles_Compras { get; set; }
+        [JsonIgnore] public List<Detalles_Compras>? Detalles_Compras { get; set; }
     }
 }
