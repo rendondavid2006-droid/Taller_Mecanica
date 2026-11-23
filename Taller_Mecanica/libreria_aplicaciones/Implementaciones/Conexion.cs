@@ -1,22 +1,30 @@
-﻿using libreria_aplicaciones.Entidades;
+﻿ 
+ 
+
+
+using libreria_aplicaciones.Entidades;
 using libreria_aplicaciones.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using libreria_aplicaciones.Nucleo;
 
 namespace libreria_aplicaciones.Implementaciones
 {
     public class Conexion : DbContext, IConexion
     {
-        public string? StringConexion { get; set; }
-
+         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(this.StringConexion!, p => { });
+            optionsBuilder.UseSqlServer(DatosGenerales.StringConexion()!, p => { });
             optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         }
-
+         
+        public DbSet<Usuarios_Clientes>? Usuarios_Clientes { get; set; }
+        public DbSet<Estados_Citas>? Estados_Citas { get; set; }
+        public DbSet<Horarios_Citas>? Horarios_Citas { get; set; }
         public DbSet<Clientes>? Clientes { get; set; }
         public DbSet<Marcas>? Marcas { get; set; }
         public DbSet<Roles>? Roles { get; set; }
+        public DbSet<Permisos>? Permisos { get; set; }
         public DbSet<Proveedores>? Proveedores { get; set; }
         public DbSet<Servicios>? Servicios { get; set; }
         public DbSet<Estados_Ordenes>? Estados_Ordenes { get; set; }
@@ -34,6 +42,8 @@ namespace libreria_aplicaciones.Implementaciones
         public DbSet<Pagos>? Pagos { get; set; }
         public DbSet<Detalles_Ordenes_Servicios>? Detalles_Ordenes_Servicios { get; set; }
         public DbSet<Detalles_Repuestos_Ordenes>? Detalles_Repuestos_Ordenes { get; set; }
-
+        public DbSet<Auditorias>? Auditorias { get; set; }
+        public string? UsuarioActual { get; set; }
+        public string StringConexion { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }
