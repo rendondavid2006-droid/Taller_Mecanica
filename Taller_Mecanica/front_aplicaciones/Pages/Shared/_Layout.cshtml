@@ -1,52 +1,581 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@using Microsoft.AspNetCore.Http
+
+@{
+    var usuario = Context.Session.GetString("Usuario");
+    var rolId = Context.Session.GetString("RolId");
+    var rolNombre = Context.Session.GetString("Rol");
+    var paginaActual = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
+    var inicialUsuario = !string.IsNullOrEmpty(usuario)
+        ? usuario.Substring(0, 1).ToUpperInvariant()
+        : "U";
+
+    bool EsPagina(string pagina)
+    {
+        return string.Equals(
+            paginaActual,
+            pagina,
+            StringComparison.OrdinalIgnoreCase);
+    }
+}
+
+<!DOCTYPE html>
+<html lang="es">
+
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - front_aplicaciones</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - Taller Mecánica</title>
+
     <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/front_aplicaciones.styles.css" asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/front_aplicaciones.styles.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/mazer/css/iconly.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/mazer/css/mazer-taller.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/tm-uiverse.css"
+          asp-append-version="true" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">front_aplicaciones</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
+
+@if (!string.IsNullOrEmpty(usuario))
+{
+    <body class="tm-authenticated">
+
+        <div id="app">
+
+            <div id="sidebar" class="active">
+
+                <div class="sidebar-wrapper active">
+
+                    <div class="sidebar-header">
+
+                        <a class="tm-brand"
+                           asp-area=""
+                           asp-page="/Index">
+
+                            <span class="tm-brand-mark">
+                                <i class="iconly-boldSetting"></i>
+                            </span>
+
+                            <span class="tm-brand-copy">
+                                <strong>Taller Mecánica</strong>
+                                <small>Sistema administrativo</small>
+                            </span>
+
+                        </a>
+
+                        <button type="button"
+                                class="sidebar-hide"
+                                aria-label="Cerrar menú">
+                            <i class="iconly-boldClose-Square"></i>
+                        </button>
+
+                    </div>
+
+
+                    <div class="sidebar-menu">
+
+                        <ul class="menu">
+
+                            <li class="sidebar-title">
+                                General
+                            </li>
+
+                            <li class="sidebar-item @(EsPagina("/Index") ? "active" : "")">
+                                <a class="sidebar-link"
+                                   asp-area=""
+                                   asp-page="/Index">
+                                    <i class="iconly-boldHome"></i>
+                                    <span>Inicio</span>
+                                </a>
+                            </li>
+
+
+
+                             
+                            @if (rolId == "1")
+                            {
+                                <li class="sidebar-title">
+                                    Clientes y vehículos
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/VehiculosClientes/Clientes") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/VehiculosClientes/Clientes">
+                                        <i class="iconly-boldProfile"></i>
+                                        <span>Clientes</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/VehiculosClientes/Marcas") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/VehiculosClientes/Marcas">
+                                        <i class="iconly-boldBookmark"></i>
+                                        <span>Marcas</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/VehiculosClientes/Modelos_Vehiculos") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/VehiculosClientes/Modelos_Vehiculos">
+                                        <i class="iconly-boldCategory"></i>
+                                        <span>Modelos</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/VehiculosClientes/Vehiculos") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/VehiculosClientes/Vehiculos">
+                                        <i class="iconly-boldDiscovery"></i>
+                                        <span>Vehículos</span>
+                                    </a>
+                                </li>
+
+
+                                <li class="sidebar-title">
+                                    Taller
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Taller/Citas") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Taller/Citas">
+                                        <i class="iconly-boldCalendar"></i>
+                                        <span>Citas</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Taller/Estados_Citas") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Taller/Estados_Citas">
+                                        <i class="iconly-boldTick-Square"></i>
+                                        <span>Estados Citas</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Taller/Horarios_Citas") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Taller/Horarios_Citas">
+                                        <i class="iconly-boldTime-Circle"></i>
+                                        <span>Horarios Citas</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Taller/Ordenes_Servicios") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Taller/Ordenes_Servicios">
+                                        <i class="iconly-boldDocument"></i>
+                                        <span>Órdenes</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Taller/Estados_Ordenes") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Taller/Estados_Ordenes">
+                                        <i class="iconly-boldActivity"></i>
+                                        <span>Estados Órdenes</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Taller/Diagnosticos") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Taller/Diagnosticos">
+                                        <i class="iconly-boldSearch"></i>
+                                        <span>Diagnósticos</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Taller/Servicios") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Taller/Servicios">
+                                        <i class="iconly-boldWork"></i>
+                                        <span>Servicios</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Taller/Detalles_Ordenes_Servicios") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Taller/Detalles_Ordenes_Servicios">
+                                        <i class="iconly-boldPaper"></i>
+                                        <span>Servicios Órdenes</span>
+                                    </a>
+                                </li>
+
+
+                                <li class="sidebar-title">
+                                    Inventario
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Inventario/Repuestos") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Inventario/Repuestos">
+                                        <i class="iconly-boldBag"></i>
+                                        <span>Repuestos</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Inventario/Proveedores") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Inventario/Proveedores">
+                                        <i class="iconly-boldUser"></i>
+                                        <span>Proveedores</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Inventario/Compras") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Inventario/Compras">
+                                        <i class="iconly-boldBuy"></i>
+                                        <span>Compras</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Inventario/Detalles_Compras") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Inventario/Detalles_Compras">
+                                        <i class="iconly-boldFolder"></i>
+                                        <span>Detalles Compras</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Inventario/Detalles_Repuestos_Ordenes") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Inventario/Detalles_Repuestos_Ordenes">
+                                        <i class="iconly-boldPaper-Plus"></i>
+                                        <span>Repuestos Órdenes</span>
+                                    </a>
+                                </li>
+
+
+                                <li class="sidebar-title">
+                                    Facturación
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Facturacion/Facturas") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Facturacion/Facturas">
+                                        <i class="iconly-boldTicket"></i>
+                                        <span>Facturas</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Facturacion/Pagos") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Facturacion/Pagos">
+                                        <i class="iconly-boldWallet"></i>
+                                        <span>Pagos</span>
+                                    </a>
+                                </li>
+
+
+                                <li class="sidebar-title">
+                                    Administración
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Administracion/Empleados") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Administracion/Empleados">
+                                        <i class="iconly-boldWork"></i>
+                                        <span>Empleados</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Administracion/Usuarios") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Administracion/Usuarios">
+                                        <i class="iconly-boldUser"></i>
+                                        <span>Usuarios</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Administracion/Usuarios_Clientes") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Administracion/Usuarios_Clientes">
+                                        <i class="iconly-boldAdd-User"></i>
+                                        <span>Usuarios Clientes</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Administracion/Roles") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Administracion/Roles">
+                                        <i class="iconly-boldShield-Done"></i>
+                                        <span>Roles</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Administracion/Permisos") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Administracion/Permisos">
+                                        <i class="iconly-boldLock"></i>
+                                        <span>Permisos</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Administracion/Auditorias") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Administracion/Auditorias">
+                                        <i class="iconly-boldChart"></i>
+                                        <span>Auditorías</span>
+                                    </a>
+                                </li>
+                            }
+
+
+
+                            @if (rolId == "2")
+                            {
+                                <li class="sidebar-title">
+                                    Operación
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/VehiculosClientes/Vehiculos") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/VehiculosClientes/Vehiculos">
+                                        <i class="iconly-boldDiscovery"></i>
+                                        <span>Vehículos</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Taller/Citas") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Taller/Citas">
+                                        <i class="iconly-boldCalendar"></i>
+                                        <span>Citas</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Taller/Ordenes_Servicios") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Taller/Ordenes_Servicios">
+                                        <i class="iconly-boldDocument"></i>
+                                        <span>Órdenes</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Taller/Diagnosticos") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Taller/Diagnosticos">
+                                        <i class="iconly-boldSearch"></i>
+                                        <span>Diagnósticos</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Taller/Servicios") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Taller/Servicios">
+                                        <i class="iconly-boldWork"></i>
+                                        <span>Servicios</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-title">
+                                    Inventario
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Inventario/Repuestos") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Inventario/Repuestos">
+                                        <i class="iconly-boldBag"></i>
+                                        <span>Repuestos</span>
+                                    </a>
+                                </li>
+                            }
+
+
+
+                            @if (rolId == "3")
+                            {
+                                <li class="sidebar-title">
+                                    Mi gestión
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Taller/Citas") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Taller/Citas">
+                                        <i class="iconly-boldCalendar"></i>
+                                        <span>Citas</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/VehiculosClientes/Vehiculos") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/VehiculosClientes/Vehiculos">
+                                        <i class="iconly-boldDiscovery"></i>
+                                        <span>Vehículos</span>
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-item @(EsPagina("/Ventanas/Taller/Servicios") ? "active" : "")">
+                                    <a class="sidebar-link"
+                                       asp-page="/Ventanas/Taller/Servicios">
+                                        <i class="iconly-boldWork"></i>
+                                        <span>Servicios</span>
+                                    </a>
+                                </li>
+                            }
+
+                        </ul>
+
+                    </div>
+
                 </div>
+
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - front_aplicaciones - <a asp-area="" asp-page="/Privacy">Privacy</a>
+
+            <div id="main">
+
+                <header class="tm-topbar">
+
+                    <div class="tm-topbar-left">
+
+                        <button type="button"
+                                class="burger-btn"
+                                aria-label="Abrir menú">
+                            <span class="tm-burger-lines"></span>
+                        </button>
+
+                        <div class="tm-topbar-title">
+                            <span>@(ViewData["Title"] ?? "Taller Mecánica")</span>
+                            <small>Panel de gestión</small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="tm-topbar-user">
+
+                        <span class="tm-user-avatar">
+                            @inicialUsuario
+                        </span>
+
+                        <div class="tm-user-copy">
+                            <strong>@usuario</strong>
+                            <small>@(rolNombre ?? "Usuario")</small>
+                        </div>
+
+                        <form method="post"
+                              asp-area=""
+                              asp-page="/Index"
+                              asp-page-handler="BtClose"
+                              class="tm-logout-form">
+
+                            <button type="submit"
+                                    class="tm-logout-btn"
+                                    title="Cerrar sesión"
+                                    aria-label="Cerrar sesión">
+                                <i class="iconly-boldLogout"></i>
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </header>
+
+
+                <div class="tm-main-content">
+
+                    <main role="main">
+                        @RenderBody()
+                    </main>
+
+                </div>
+
+
+                <footer class="tm-footer">
+                    &copy; 2026 - Taller Mecánica
+                </footer>
+
+            </div>
+
         </div>
-    </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
 
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
+        <script src="~/lib/jquery/dist/js/jquery.min.js"></script>
+
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script src="~/js/site.js"
+                asp-append-version="true"></script>
+
+        <script src="~/mazer/js/mazer-layout.js"
+                asp-append-version="true"></script>
+
+        <script src="~/js/tm-uiverse.js"
+                asp-append-version="true"></script>
+
+        @await RenderSectionAsync(
+            "Scripts",
+            required: false)
+
+    </body>
+}
+else
+{
+    <body class="tm-public">
+
+        <header class="tm-public-header">
+
+            <a class="tm-brand tm-public-brand"
+               asp-area=""
+               asp-page="/Index">
+
+                <span class="tm-brand-mark">
+                    <i class="iconly-boldSetting"></i>
+                </span>
+
+                <span class="tm-brand-copy">
+                    <strong>Taller Mecánica</strong>
+                    <small>Sistema administrativo</small>
+                </span>
+
+            </a>
+
+        </header>
+
+
+        <div class="tm-public-main">
+
+            <main role="main">
+                @RenderBody()
+            </main>
+
+        </div>
+
+
+        <script src="~/lib/jquery/dist/js/jquery.min.js"></script>
+
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script src="~/js/site.js"
+                asp-append-version="true"></script>
+
+        <script src="~/js/tm-uiverse.js"
+                asp-append-version="true"></script>
+
+        @await RenderSectionAsync(
+            "Scripts",
+            required: false)
+
+    </body>
+}
+
 </html>

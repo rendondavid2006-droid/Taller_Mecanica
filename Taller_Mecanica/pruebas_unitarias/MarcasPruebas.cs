@@ -1,4 +1,7 @@
-﻿using libreria_aplicaciones.Entidades;
+﻿ 
+ 
+
+using libreria_aplicaciones.Entidades;
 using libreria_aplicaciones.Implementaciones;
 using libreria_aplicaciones.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +17,7 @@ namespace pruebas_unitarias
         public MarcasPruebas()
         {
             this.conexion = new Conexion();
-            conexion.StringConexion = "server=localhost;database=Taller_Mecanica;Integrated Security=True;TrustServerCertificate=true;";
+            
         }
 
         [TestMethod]
