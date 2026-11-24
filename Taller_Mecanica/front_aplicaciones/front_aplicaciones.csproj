@@ -18,4 +18,8 @@
     <Folder Include="Pages\Ventanas\Taller\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\presentacion_aplicaciones\presentacion_aplicaciones.csproj" />
+  </ItemGroup>
+
 </Project>
