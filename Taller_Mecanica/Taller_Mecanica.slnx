@@ -1,5 +1,8 @@
 <Solution>
   <Project Path="consola_aplicaciones/consola_aplicaciones.csproj" />
+  <Project Path="front_aplicaciones/front_aplicaciones.csproj" />
   <Project Path="libreria_aplicaciones/libreria_aplicaciones.csproj" />
+  <Project Path="presentacion_aplicaciones/presentacion_aplicaciones.csproj" />
   <Project Path="pruebas_unitarias/pruebas_unitarias.csproj" />
+  <Project Path="servicio_aplicaciones/servicio_aplicaciones.csproj" />
 </Solution>
