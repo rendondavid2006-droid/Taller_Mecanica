@@ -1,0 +1,302 @@
+﻿@page
+@model Modelos_VehiculosModel
+
+@{
+    ViewData["Title"] = "Modelos Vehículos";
+}
+
+<form method="post"
+      enctype="multipart/form-data">
+
+    <div class="text-center">
+
+        <h1 class="display-4">
+            Modelos Vehículos
+        </h1>
+
+
+        <input type="submit"
+               value="Buscar"
+               class="btn btn-secondary"
+               asp-page-handler="BtBuscar" />
+
+
+        <input type="submit"
+               value="Nuevo"
+               class="btn btn-secondary"
+               asp-page-handler="BtNuevo" />
+
+
+        @if (Model.Formulario)
+        {
+            <input type="submit"
+                   value="Guardar"
+                   class="btn btn-secondary"
+                   asp-page-handler="BtGuardar" />
+        }
+
+
+        <input id="flNombre"
+               placeholder="Nombre Modelo"
+               asp-for="@Model.Filtro!.Nombre_Modelo" />
+
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+            @await Html.PartialAsync(
+                "/Pages/Emergentes/Mensajes.cshtml"
+            )
+        }
+
+
+        @if (Model.Formulario || Model.Borrar)
+        {
+            <input id="nmId"
+                   type="hidden"
+                   asp-for="@Model.Actual!.Id" />
+        }
+
+
+
+
+        @if (Model.Formulario)
+        {
+            <div>
+
+                <h3>
+                    Modelo de Vehículo
+                </h3>
+
+
+
+                <label>
+                    Marca
+                </label>
+
+                <select id="nmMarca"
+                        class="form-control"
+                        asp-for="@Model.Actual!.Marca">
+
+                    <option value="0">
+                        Seleccione una marca
+                    </option>
+
+                    @foreach (var marca in Model.Marcas)
+                    {
+                        if (Model.Actual?.Marca == marca.Id)
+                        {
+                            <option value="@marca.Id"
+                                    selected>
+                                @marca.Nombre_Marca
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@marca.Id">
+                                @marca.Nombre_Marca
+                            </option>
+                        }
+                    }
+
+                </select>
+
+                <br />
+
+
+                <label>
+                    Nombre Modelo
+                </label>
+
+                <input id="nmNombre_Modelo"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Nombre_Modelo" />
+
+                <br />
+
+
+                <label>
+                    Año Inicio
+                </label>
+
+                <input id="nmAño_inicio"
+                       type="number"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Año_inicio" />
+
+                <br />
+
+
+                <label>
+                    Tipo Vehículo
+                </label>
+
+                <input id="nmTipo_Vehiculo"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Tipo_Vehiculo" />
+
+                <br />
+
+
+                <label>
+                    Cilindraje
+                </label>
+
+                <input id="nmCilindraje"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Cilindraje" />
+
+                <br />
+
+            </div>
+        }
+
+
+        @if (Model.Borrar)
+        {
+            <div class="popup">
+
+                <div class="pp_del_inner">
+
+                    <h3>
+                        Mensaje
+                    </h3>
+
+                    <h4>
+                        ¿Desea borrar el modelo?
+                    </h4>
+
+                    <h6>
+                        @Model.Actual?.Nombre_Modelo
+                    </h6>
+
+
+                    <input type="submit"
+                           value="Cancelar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBuscar" />
+
+
+                    <input type="submit"
+                           value="Borrar"
+                           class="btn btn-danger"
+                           asp-page-handler="BtBorrar" />
+
+                </div>
+
+            </div>
+        }
+
+
+
+
+        @if (!Model.Formulario)
+        {
+            <div class="containers_vn panel panel-default">
+
+                <table class="tb_data table table-striped table-bordered table-hover">
+
+                    <tr>
+
+                        <th>
+                            Marca
+                        </th>
+
+                        <th>
+                            Nombre Modelo
+                        </th>
+
+                        <th>
+                            Año Inicio
+                        </th>
+
+                        <th>
+                            Tipo Vehículo
+                        </th>
+
+                        <th>
+                            Cilindraje
+                        </th>
+
+                        <th>
+                            Acción
+                        </th>
+
+                    </tr>
+
+
+                    @if (Model.Lista != null)
+                    {
+                        foreach (var elemento in Model.Lista)
+                        {
+                            var marca =
+                                Model.Marcas
+                                    .FirstOrDefault(
+                                        x =>
+                                            x.Id ==
+                                            elemento.Marca);
+
+                            <tr>
+
+                                <td>
+                                    @if (marca != null)
+                                    {
+                                        @marca.Nombre_Marca
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            Marca #@elemento.Marca
+                                        </span>
+                                    }
+                                </td>
+
+
+                                <td>
+                                    @elemento.Nombre_Modelo
+                                </td>
+
+
+                                <td>
+                                    @elemento.Año_inicio
+                                </td>
+
+
+                                <td>
+                                    @elemento.Tipo_Vehiculo
+                                </td>
+
+
+                                <td>
+                                    @elemento.Cilindraje
+                                </td>
+
+
+                                <td>
+
+                                    <input type="submit"
+                                           value="Editar"
+                                           class="btn btn-secondary"
+                                           asp-page-handler="BtEditar"
+                                           asp-route-data="@elemento.Id" />
+
+
+                                    <input type="submit"
+                                           value="Borrar"
+                                           class="btn btn-danger"
+                                           asp-page-handler="BtPregBorrar"
+                                           asp-route-data="@elemento.Id" />
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</form>

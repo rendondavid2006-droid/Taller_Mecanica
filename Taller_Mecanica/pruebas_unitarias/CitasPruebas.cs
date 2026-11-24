@@ -1,4 +1,7 @@
-﻿using libreria_aplicaciones.Entidades;
+﻿ 
+ 
+
+using libreria_aplicaciones.Entidades;
 using libreria_aplicaciones.Implementaciones;
 using libreria_aplicaciones.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +17,7 @@ namespace pruebas_unitarias
         public CitasPruebas()
         {
             this.conexion = new Conexion();
-            conexion.StringConexion = "server=localhost;database=Taller_Mecanica;Integrated Security=True;TrustServerCertificate=true;";
+            
         }
 
         [TestMethod]
@@ -32,10 +35,9 @@ namespace pruebas_unitarias
             {
                 Cliente = 1,
                 Vehiculo = 1,
-                Fecha_Cita = DateTime.Now,
-                Hora_Cita = DateTime.Now,
+                Horario_Cita = 3,
                 Motivo = "Test",
-                Estado = "Pendiente",
+                Estado_Cita = 1,
             };
 
             this.conexion.Citas!.Add(this.entidad!);

@@ -1,0 +1,475 @@
+@page
+@model DiagnosticosModel
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Diagnósticos";
+
+    var rolId =
+        ViewContext.HttpContext.Session.GetString("RolId");
+}
+
+<form method="post"
+      enctype="multipart/form-data">
+
+    <div class="text-center">
+
+        <h1 class="display-4">
+            Diagnósticos
+        </h1>
+
+
+        <input type="submit"
+               value="Buscar"
+               class="btn btn-secondary"
+               asp-page-handler="BtBuscar" />
+
+
+        @if (rolId == "1" || rolId == "2")
+        {
+            <input type="submit"
+                   value="Nuevo"
+                   class="btn btn-secondary"
+                   asp-page-handler="BtNuevo" />
+        }
+
+
+        @if (Model.Formulario)
+        {
+            <input type="submit"
+                   value="Guardar"
+                   class="btn btn-secondary"
+                   asp-page-handler="BtGuardar" />
+        }
+
+
+        @if (rolId == "2")
+        {
+             
+            <input id="flPlaca"
+                   placeholder="Placa del vehículo"
+                   asp-for="@Model.PlacaBusqueda" />
+        }
+        else
+        {
+            <input id="flDescripcion_Problema"
+                   placeholder="Descripción del Problema"
+                   asp-for="@Model.Filtro!.Descripcion_Problema" />
+        }
+
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+            @await Html.PartialAsync(
+                "/Pages/Emergentes/Mensajes.cshtml"
+            )
+        }
+
+
+        @if (Model.Formulario || Model.Borrar)
+        {
+            <input id="nmId"
+                   type="hidden"
+                   asp-for="@Model.Actual!.Id" />
+        }
+
+
+
+        @if (Model.Formulario)
+        {
+            <div>
+
+                <h3>
+                    Diagnóstico
+                </h3>
+
+                <label>
+                    Orden de Servicio
+                </label>
+
+
+                @if (rolId == "1")
+                {
+                    <select id="nmOrden"
+                            class="form-control"
+                            asp-for="@Model.Actual!.Orden">
+
+                        <option value="0">
+                            Seleccione una orden
+                        </option>
+
+                        @foreach (var orden in Model.Ordenes)
+                        {
+                            if (Model.Actual?.Orden == orden.Id)
+                            {
+                                <option value="@orden.Id"
+                                        selected>
+                                    @orden._Cita?._Cliente?.Documento -
+                                    @orden._Cita?._Cliente?.Nombre
+                                    @orden._Cita?._Cliente?.Apellido -
+                                    @orden._Vehiculo?.Placa
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@orden.Id">
+                                    @orden._Cita?._Cliente?.Documento -
+                                    @orden._Cita?._Cliente?.Nombre
+                                    @orden._Cita?._Cliente?.Apellido -
+                                    @orden._Vehiculo?.Placa
+                                </option>
+                            }
+                        }
+
+                    </select>
+                }
+
+
+                @if (rolId == "2" &&
+                     Model.Actual?.Id == 0)
+                {
+                    <select id="nmOrden"
+                            class="form-control"
+                            asp-for="@Model.Actual!.Orden">
+
+                        <option value="0">
+                            Seleccione una orden
+                        </option>
+
+                        @foreach (var orden in Model.Ordenes)
+                        {
+                            if (Model.Actual?.Orden == orden.Id)
+                            {
+                                <option value="@orden.Id"
+                                        selected>
+                                    @orden._Cita?._Cliente?.Documento -
+                                    @orden._Cita?._Cliente?.Nombre
+                                    @orden._Cita?._Cliente?.Apellido -
+                                    @orden._Vehiculo?.Placa
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@orden.Id">
+                                    @orden._Cita?._Cliente?.Documento -
+                                    @orden._Cita?._Cliente?.Nombre
+                                    @orden._Cita?._Cliente?.Apellido -
+                                    @orden._Vehiculo?.Placa
+                                </option>
+                            }
+                        }
+
+                    </select>
+                }
+
+
+                @if (rolId == "2" &&
+                     Model.Actual?.Id != 0)
+                {
+                    var ordenActual =
+                        Model.Ordenes
+                            .FirstOrDefault(
+                                x =>
+                                    x.Id ==
+                                    Model.Actual!.Orden);
+
+                    <input type="text"
+                           class="form-control"
+                           value="@ordenActual?._Cita?._Cliente?.Documento - @ordenActual?._Cita?._Cliente?.Nombre @ordenActual?._Cita?._Cliente?.Apellido - @ordenActual?._Vehiculo?.Placa"
+                           readonly />
+
+                    <input type="hidden"
+                           asp-for="@Model.Actual!.Orden" />
+                }
+
+                <br />
+
+                <label>
+                    Mecánico Responsable
+                </label>
+
+
+                @if (rolId == "1")
+                {
+                    <select id="nmEmpleado"
+                            class="form-control"
+                            asp-for="@Model.Actual!.Empleado">
+
+                        <option value="0">
+                            Seleccione un empleado
+                        </option>
+
+                        @foreach (var empleado in Model.Empleados)
+                        {
+                            if (Model.Actual?.Empleado == empleado.Id)
+                            {
+                                <option value="@empleado.Id"
+                                        selected>
+                                    @empleado.Nombre
+                                    @empleado.Apellido
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@empleado.Id">
+                                    @empleado.Nombre
+                                    @empleado.Apellido
+                                </option>
+                            }
+                        }
+
+                    </select>
+                }
+
+
+                @if (rolId == "2")
+                {
+                    var empleadoActual =
+                        Model.Empleados
+                            .FirstOrDefault(
+                                x =>
+                                    x.Id ==
+                                    Model.Actual!.Empleado);
+
+                    <input type="text"
+                           class="form-control"
+                           value="@empleadoActual?.Nombre @empleadoActual?.Apellido"
+                           readonly />
+
+                    <input type="hidden"
+                           asp-for="@Model.Actual!.Empleado" />
+                }
+
+                <br />
+
+
+
+
+                <label>
+                    Fecha del Diagnóstico
+                </label>
+
+
+                @if (rolId == "1")
+                {
+                    <input id="nmFecha_Diagnostico"
+                           type="datetime-local"
+                           class="form-control"
+                           asp-for="@Model.Actual!.Fecha_Diagnostico"
+                           asp-format="{0:yyyy-MM-ddTHH:mm}" />
+                }
+
+
+                @if (rolId == "2")
+                {
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.Actual!.Fecha_Diagnostico.ToString("dd/MM/yyyy HH:mm")"
+                           readonly />
+
+                    <input type="hidden"
+                           asp-for="@Model.Actual!.Fecha_Diagnostico" />
+                }
+
+                <br />
+
+
+
+
+                <label>
+                    Descripción del Problema
+                </label>
+
+                <input id="nmDescripcion_Problema"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Descripcion_Problema" />
+
+                <br />
+
+
+
+                <label>
+                    Observaciones
+                </label>
+
+                <input id="nmObservaciones"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Observaciones" />
+
+                <br />
+
+            </div>
+        }
+
+
+
+
+        @if (Model.Borrar &&
+             rolId == "1")
+        {
+            <div class="popup">
+
+                <div class="pp_del_inner">
+
+                    <h3>
+                        Mensaje
+                    </h3>
+
+                    <h4>
+                        ¿Desea borrar el diagnóstico?
+                    </h4>
+
+                    <h6>
+                        @Model.Actual?.Descripcion_Problema
+                    </h6>
+
+
+                    <input type="submit"
+                           value="Cancelar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBuscar" />
+
+
+                    <input type="submit"
+                           value="Borrar"
+                           class="btn btn-danger"
+                           asp-page-handler="BtBorrar" />
+
+                </div>
+
+            </div>
+        }
+
+
+
+        @if (!Model.Formulario)
+        {
+            <div class="containers_vn panel panel-default"
+                 style="overflow-x:auto">
+
+                <table class="tb_data table table-striped table-bordered table-hover">
+
+                    <tr>
+
+                        <th>
+                            Orden
+                        </th>
+
+                        <th>
+                            Mecánico
+                        </th>
+
+                        <th>
+                            Fecha Diagnóstico
+                        </th>
+
+                        <th>
+                            Descripción del Problema
+                        </th>
+
+                        <th>
+                            Observaciones
+                        </th>
+
+                        <th>
+                            Acción
+                        </th>
+
+                    </tr>
+
+
+                    @if (Model.Lista != null)
+                    {
+                        foreach (var elemento in Model.Lista)
+                        {
+                            <tr>
+
+                                <td>
+                                    @{
+                                        var orden =
+                                            Model.Ordenes
+                                                .FirstOrDefault(
+                                                    x => x.Id == elemento.Orden);
+                                    }
+
+                                    @if (orden != null)
+                                    {
+                                        <span>
+                                            @orden._Cita?._Cliente?.Documento -
+                                            @orden._Cita?._Cliente?.Nombre
+                                            @orden._Cita?._Cliente?.Apellido -
+                                            @orden._Vehiculo?.Placa
+                                        </span>
+                                    }
+                                </td>
+
+
+                                <td>
+                                    @if (elemento._Empleado != null)
+                                    {
+                                        <span>
+                                            @elemento._Empleado.Nombre
+                                            @elemento._Empleado.Apellido
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            Empleado #@elemento.Empleado
+                                        </span>
+                                    }
+                                </td>
+
+
+                                <td>
+                                    @elemento.Fecha_Diagnostico.ToString(
+                                        "dd/MM/yyyy HH:mm")
+                                </td>
+
+
+                                <td>
+                                    @elemento.Descripcion_Problema
+                                </td>
+
+
+                                <td>
+                                    @elemento.Observaciones
+                                </td>
+
+
+                                <td>
+
+                                    @if (rolId == "1" ||
+                                         rolId == "2")
+                                    {
+                                        <input type="submit"
+                                               value="Editar"
+                                               class="btn btn-secondary"
+                                               asp-page-handler="BtEditar"
+                                               asp-route-data="@elemento.Id" />
+                                    }
+
+
+                                    @if (rolId == "1")
+                                    {
+                                        <input type="submit"
+                                               value="Borrar"
+                                               class="btn btn-danger"
+                                               asp-page-handler="BtPregBorrar"
+                                               asp-route-data="@elemento.Id" />
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</form>

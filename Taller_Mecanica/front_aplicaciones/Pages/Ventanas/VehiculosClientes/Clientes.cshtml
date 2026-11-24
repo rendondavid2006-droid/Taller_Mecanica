@@ -1,0 +1,212 @@
+﻿@page
+@model ClientesModel
+@{
+    ViewData["Title"] = "Clientes";
+}
+
+<form method="post"
+      enctype="multipart/form-data"
+      class="tm-crud-form">
+
+    <div class="tm-crud-page">
+
+        <div class="tm-page-header">
+            <div>
+                <h1 class="tm-page-heading">
+                    Clientes
+                </h1>
+                <p class="tm-page-subtitle">
+                    Consulta y administra la información de los clientes del taller.
+                </p>
+            </div>
+        </div>
+
+        <div class="tm-crud-toolbar">
+            <input type="submit"
+                   value="Buscar"
+                   class="btn btn-secondary tm-btn tm-btn-primary"
+                   title="Buscar clientes"
+                   asp-page-handler="BtBuscar" />
+
+            <input type="submit"
+                   value="Nuevo"
+                   class="btn btn-secondary tm-btn tm-btn-primary"
+                   title="Crear un nuevo cliente"
+                   asp-page-handler="BtNuevo" />
+
+            <input type="submit"
+                   value="Guardar"
+                   class="btn btn-secondary tm-btn tm-btn-primary"
+                   title="Guardar información del cliente"
+                   asp-page-handler="BtGuardar" />
+
+            <input id="flDocumento"
+                   class="tm-search"
+                   placeholder="Buscar por cédula"
+                   aria-label="Buscar cliente por cédula"
+                   asp-for="@Model.Filtro!.Documento" />
+        </div>
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+            @await Html.PartialAsync(
+                "/Pages/Emergentes/Mensajes.cshtml"
+            )
+        }
+
+        @if (Model.Formulario || Model.Borrar)
+        {
+            <input id="nmId"
+                   type="hidden"
+                   asp-for="@Model.Actual!.Id" />
+        }
+
+        @if (Model.Formulario)
+        {
+            <div class="tm-editor-card">
+                <h3>
+                    Datos del cliente
+                </h3>
+
+                <div class="tm-form-grid">
+                    <div class="tm-form-field">
+                        <label class="tm-field-label"
+                               for="nmDocumento">
+                            Documento
+                        </label>
+                        <input id="nmDocumento"
+                               class="tm-form-control"
+                               asp-for="@Model.Actual!.Documento" />
+                    </div>
+
+                    <div class="tm-form-field">
+                        <label class="tm-field-label"
+                               for="nmNombre">
+                            Nombre
+                        </label>
+                        <input id="nmNombre"
+                               class="tm-form-control"
+                               asp-for="@Model.Actual!.Nombre" />
+                    </div>
+
+                    <div class="tm-form-field">
+                        <label class="tm-field-label"
+                               for="nmApellido">
+                            Apellido
+                        </label>
+                        <input id="nmApellido"
+                               class="tm-form-control"
+                               asp-for="@Model.Actual!.Apellido" />
+                    </div>
+
+                    <div class="tm-form-field">
+                        <label class="tm-field-label"
+                               for="nmTelefono">
+                            Teléfono
+                        </label>
+                        <input id="nmTelefono"
+                               class="tm-form-control"
+                               asp-for="@Model.Actual!.Telefono" />
+                    </div>
+
+                    <div class="tm-form-field">
+                        <label class="tm-field-label"
+                               for="nmCorreo">
+                            Correo
+                        </label>
+                        <input id="nmCorreo"
+                               class="tm-form-control"
+                               asp-for="@Model.Actual!.Correo" />
+                    </div>
+
+                    <div class="tm-form-field">
+                        <label class="tm-field-label"
+                               for="nmDireccion">
+                            Dirección
+                        </label>
+                        <input id="nmDireccion"
+                               class="tm-form-control"
+                               asp-for="@Model.Actual!.Direccion" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (Model.Borrar)
+        {
+            <div class="popup">
+                <div class="pp_del_inner">
+                    <h3>Mensaje</h3>
+
+                    <h4>
+                        ¿Desea borrar la entidad...?
+                    </h4>
+
+                    <h6>
+                        @Model.Actual!.Documento,
+                        @Model.Actual!.Nombre,
+                        @Model.Actual!.Apellido
+                    </h6>
+
+                    <input type="submit"
+                           value="Cancelar"
+                           class="btn btn-secondary tm-btn tm-btn-neutral"
+                           asp-page-handler="BtBuscar" />
+
+                    <input type="submit"
+                           value="Borrar"
+                           class="btn btn-secondary tm-btn tm-btn-danger"
+                           asp-page-handler="BtBorrar" />
+                </div>
+            </div>
+        }
+
+        @if (!Model.Formulario)
+        {
+            <div class="containers_vn panel panel-default tm-table-card">
+                <table class="tb_data table table-striped table-bordered table-hover tm-data-table">
+                    <tr>
+                        <th>Documento</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Dirección</th>
+                        <th>Acción</th>
+                    </tr>
+
+                    @if (Model != null && Model.Lista != null)
+                    {
+                        foreach (var elemento in Model.Lista)
+                        {
+                            <tr>
+                                <td>@elemento.Documento</td>
+                                <td>@elemento.Nombre</td>
+                                <td>@elemento.Apellido</td>
+                                <td>@elemento.Telefono</td>
+                                <td>@elemento.Correo</td>
+                                <td>@elemento.Direccion</td>
+                                <td>
+                                    <input type="submit"
+                                           value="Editar"
+                                           class="btn btn-secondary tm-btn tm-btn-secondary"
+                                           title="Editar cliente"
+                                           asp-page-handler="BtEditar"
+                                           asp-route-data="@elemento.Id" />
+
+                                    <input type="submit"
+                                           value="Borrar"
+                                           class="btn btn-secondary tm-btn tm-btn-danger"
+                                           title="Eliminar cliente"
+                                           asp-page-handler="BtPregBorrar"
+                                           asp-route-data="@elemento.Id" />
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        }
+
+    </div>
+</form>

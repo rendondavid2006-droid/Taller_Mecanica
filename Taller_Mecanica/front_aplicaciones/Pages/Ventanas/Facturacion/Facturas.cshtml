@@ -1,0 +1,345 @@
+@page
+@model FacturasModel
+@{
+    ViewData["Title"] = "Facturas";
+}
+
+<form method="post" enctype="multipart/form-data">
+    <div class="text-center">
+        <h1 class="display-4">Facturas</h1>
+
+        <input type="submit" value="Buscar" class="btn btn-secondary" asp-page-handler="BtBuscar" />
+        <input type="submit" value="Nuevo" class="btn btn-secondary" asp-page-handler="BtNuevo" />
+        @if (Model.Formulario)
+        {
+            <input type="submit" value="Guardar" class="btn btn-secondary" asp-page-handler="BtGuardar" />
+        }
+        <input id="flDocumento" placeholder="Documento cliente" asp-for="@Model.Filtro!._Cliente!.Documento" />
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+            @await Html.PartialAsync("/Pages/Emergentes/Mensajes.cshtml")
+        }
+
+        @if (Model.Formulario || Model.Borrar)
+        {
+            <input id="nmId" type="hidden" asp-for="@Model.Actual!.Id" />
+        }
+
+        @if (Model.Formulario)
+        {
+            <div>
+                <h3>Factura</h3>
+
+                <label>Orden</label>
+                <select id="nmOrden" asp-for="@Model.Actual!.Orden" onchange="cargarValoresOrden()">
+                    <option value="0">Seleccione una orden</option>
+                    @foreach (var orden in Model.Ordenes)
+                    {
+ 
+                        var sumaServicios = Model.DetallesServicios.Where(x => x.Orden == orden.Id).Sum(x => x.Subtotal);
+                        var sumaRepuestos = Model.DetallesRepuestos.Where(x => x.Orden == orden.Id).Sum(x => x.Subtotal);
+                        var sumaOrden = (sumaServicios + sumaRepuestos).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+                        if (Model.Actual?.Orden == orden.Id)
+                        {
+                            <option value="@orden.Id" data-subtotal="@sumaOrden" selected>@orden._Cita?._Cliente?.Documento - @orden._Cita?._Cliente?.Nombre @orden._Cita?._Cliente?.Apellido - @orden._Vehiculo?.Placa</option>
+                        }
+                        else
+                        {
+                            <option value="@orden.Id" data-subtotal="@sumaOrden">@orden._Cita?._Cliente?.Documento - @orden._Cita?._Cliente?.Nombre @orden._Cita?._Cliente?.Apellido - @orden._Vehiculo?.Placa</option>
+                        }
+                    }
+                </select>
+                <br />
+
+                <label>Cliente</label>
+                <select id="nmCliente" asp-for="@Model.Actual!.Cliente">
+                    <option value="0">Seleccione un cliente</option>
+                    @foreach (var cliente in Model.Clientes)
+                    {
+                        if (Model.Actual?.Cliente == cliente.Id)
+                        {
+                            <option value="@cliente.Id" selected>@cliente.Documento - @cliente.Nombre @cliente.Apellido</option>
+                        }
+                        else
+                        {
+                            <option value="@cliente.Id">@cliente.Documento - @cliente.Nombre @cliente.Apellido</option>
+                        }
+                    }
+                </select>
+                <br />
+
+                <label>Fecha Factura</label>
+                <input id="nmFechaFactura" asp-for="@Model.Actual!.Fecha_Factura" />
+                <br />
+
+                <label>Subtotal</label>
+                <input id="nmSubtotal" asp-for="@Model.Actual!.Subtotal" readonly />
+                <br />
+
+                <label>Impuesto</label>
+                <input id="nmImpuesto" asp-for="@Model.Actual!.Impuesto" readonly />
+                <small>Impuesto de ejemplo: 19 %. Se calcula automaticamente.</small>
+                <br />
+
+                <label>Estado</label>
+                <select id="nmEstado" class="form-control" asp-for="@Model.Actual!.Estado">
+                    <option value="">Seleccione un estado</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Pagada">Pagada</option>
+                    <option value="Anulada">Anulada</option>
+                </select>
+                <br />
+
+                <label>Total</label>
+                <input id="nmTotal" asp-for="@Model.Actual!.Total" readonly />
+                <br />
+            </div>
+        }
+
+        @if (Model.Borrar)
+        {
+            <div class="popup">
+                <div class="pp_del_inner">
+                    <h3>Mensaje</h3>
+                    <h4>¿Desea borrar la entidad...?</h4>
+                    <h6>@Model.Actual!._Cliente!.Nombre</h6>
+
+                    <input type="submit" value="Cancelar" class="btn btn-secondary" asp-page-handler="BtBuscar" />
+                    <input type="submit" value="Borrar" class="btn btn-secondary" asp-page-handler="BtBorrar" />
+                </div>
+            </div>
+        }
+
+        @if (!Model.Formulario)
+        {
+            <div class="containers_vn panel panel-default">
+                <table class="tb_data table table-striped table-bordered table-hover">
+                    <tr>
+                        <th>Orden</th>
+                        <th>Cliente</th>
+                        <th>Fecha Factura</th>
+                        <th>Subtotal</th>
+                        <th>Impuesto</th>
+                        <th>Estado</th>
+                        <th>Total</th>
+                        <th>Acción</th>
+                    </tr>
+
+                    @if (Model.Lista != null)
+                    {
+                        foreach (var elemento in Model.Lista)
+                        {
+                            var orden = Model.Ordenes.FirstOrDefault(x => x.Id == elemento.Orden);
+                            var cliente = Model.Clientes.FirstOrDefault(x => x.Id == elemento.Cliente);
+
+                            var textoOrden = orden != null
+                                ? $"{orden._Cita?._Cliente?.Documento} - {orden._Cita?._Cliente?.Nombre} {orden._Cita?._Cliente?.Apellido} - {orden._Vehiculo?.Placa}"
+                                : "Orden no disponible";
+
+                            var textoCliente = cliente != null
+                                ? $"{cliente.Documento} - {cliente.Nombre} {cliente.Apellido}".Trim()
+                                : "Cliente no disponible";
+
+                            <tr>
+                                <td>@textoOrden</td>
+                                <td>@textoCliente</td>
+                                <td>@elemento.Fecha_Factura</td>
+                                <td>@elemento.Subtotal</td>
+                                <td>@elemento.Impuesto</td>
+                                <td>@elemento.Estado</td>
+                                <td>@elemento.Total</td>
+                                <td>
+                                     
+                                    <input type="submit"
+                                           value="Descargar PDF"
+                                           class="btn btn-success"
+                                           asp-page-handler="BtDescargarPdf"
+                                           asp-route-data="@elemento.Id" />
+
+                                    <button type="button"
+                                            class="btn btn-primary"
+                                            data-id="@elemento.Id"
+                                            data-orden="@textoOrden"
+                                            data-cliente="@textoCliente"
+                                            data-fecha="@elemento.Fecha_Factura.ToString("dd/MM/yyyy HH:mm")"
+                                            data-subtotal="@elemento.Subtotal.ToString("N2")"
+                                            data-impuesto="@elemento.Impuesto.ToString("N2")"
+                                            data-estado="@elemento.Estado"
+                                            data-total="@elemento.Total.ToString("N2")"
+                                            onclick="imprimirFactura(this)">
+                                        Imprimir
+                                    </button>
+
+                                    <input type="submit"
+                                           value="Editar"
+                                           class="btn btn-secondary"
+                                           asp-page-handler="BtEditar"
+                                           asp-route-data="@elemento.Id" />
+
+                                    <input type="submit"
+                                           value="Borrar"
+                                           class="btn btn-danger"
+                                           asp-page-handler="BtPregBorrar"
+                                           asp-route-data="@elemento.Id" />
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        }
+    </div>
+</form>
+
+<div id="facturaImpresion">
+    <div class="print-header">
+        <div>
+            <h1>Taller Mecánica</h1>
+            <span>Factura de servicio</span>
+        </div>
+        <div class="print-numero">
+            <h2 id="printId"></h2>
+            <span id="printFechaSuperior"></span>
+        </div>
+    </div>
+
+    <h3>Información de la factura</h3>
+    <table>
+        <tr><td class="print-label">Cliente</td><td id="printCliente"></td></tr>
+        <tr><td class="print-label">Orden</td><td id="printOrden"></td></tr>
+        <tr><td class="print-label">Fecha</td><td id="printFecha"></td></tr>
+        <tr><td class="print-label">Estado</td><td id="printEstado"></td></tr>
+    </table>
+
+    <h3>Resumen de valores</h3>
+    <table>
+        <tr><td class="print-label">Subtotal</td><td id="printSubtotal"></td></tr>
+        <tr><td class="print-label">Impuesto</td><td id="printImpuesto"></td></tr>
+        <tr><td class="print-label">TOTAL</td><td id="printTotal" class="print-total"></td></tr>
+    </table>
+
+    <div class="print-footer">Documento generado por Taller Mecánica</div>
+</div>
+
+<style>
+    #facturaImpresion {
+        display: none;
+    }
+
+    @@media print {
+        body * {
+            visibility: hidden !important;
+        }
+
+        #facturaImpresion,
+        #facturaImpresion * {
+            visibility: visible !important;
+        }
+
+        #facturaImpresion {
+            display: block !important;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            padding: 35px;
+            background: white;
+            color: #222;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .print-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid #435ebe;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+            .print-header h1 {
+                margin: 0;
+                color: #435ebe;
+                font-size: 26px;
+            }
+
+        .print-numero {
+            text-align: right;
+        }
+
+            .print-numero h2 {
+                margin: 0;
+            }
+
+        #facturaImpresion h3 {
+            margin-top: 30px;
+            color: #25396f;
+        }
+
+        #facturaImpresion table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #facturaImpresion td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .print-label {
+            width: 35%;
+            background: #f2f4f8;
+            font-weight: bold;
+        }
+
+        .print-total {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .print-footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #777;
+            font-size: 12px;
+        }
+    }
+</style>
+
+<script>
+ 
+    function imprimirFactura(boton) {
+        const d = boton.dataset;
+
+        document.getElementById("printId").textContent = "FACTURA #" + d.id;
+        document.getElementById("printFechaSuperior").textContent = d.fecha;
+        document.getElementById("printCliente").textContent = d.cliente;
+        document.getElementById("printOrden").textContent = d.orden;
+        document.getElementById("printFecha").textContent = d.fecha;
+        document.getElementById("printEstado").textContent = d.estado;
+        document.getElementById("printSubtotal").textContent = "$ " + d.subtotal;
+        document.getElementById("printImpuesto").textContent = "$ " + d.impuesto;
+        document.getElementById("printTotal").textContent = "$ " + d.total;
+
+        window.print();
+    }
+</script>
+<script>
+ 
+    function cargarValoresOrden() {
+        const orden = document.getElementById("nmOrden");
+        const opcion = orden.options[orden.selectedIndex];
+        const subtotal = Number(opcion?.dataset.subtotal || 0);
+        document.getElementById("nmSubtotal").value = subtotal.toFixed(2);
+        document.getElementById("nmImpuesto").value = (subtotal * 0.19).toFixed(2);
+        calcularTotalFactura();
+    }
+
+ 
+    function calcularTotalFactura() {
+        const subtotal = parseFloat(document.getElementById("nmSubtotal")?.value || "0");
+        const impuesto = parseFloat(document.getElementById("nmImpuesto")?.value || "0");
+        const total = document.getElementById("nmTotal");
+        if (total) total.value = (subtotal + impuesto).toFixed(2);
+    }
+</script>

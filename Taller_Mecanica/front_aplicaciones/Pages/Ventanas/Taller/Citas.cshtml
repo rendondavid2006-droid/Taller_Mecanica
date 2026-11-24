@@ -1,0 +1,535 @@
+﻿@page
+@model CitasModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Citas";
+
+    var rolId =
+        ViewContext.HttpContext.Session.GetString("RolId");
+}
+
+<form method="post"
+      enctype="multipart/form-data">
+
+    <div class="text-center">
+
+        <h1 class="display-4">
+            Citas
+        </h1>
+
+
+        <input type="submit"
+               value="Buscar"
+               class="btn btn-secondary"
+               asp-page-handler="BtBuscar" />
+
+
+         
+        @if (rolId == "1" || rolId == "3")
+        {
+            <input type="submit"
+                   value="Nuevo"
+                   class="btn btn-secondary"
+                   asp-page-handler="BtNuevo" />
+        }
+
+
+        @if (Model.Formulario)
+        {
+            <input type="submit"
+                   value="Guardar"
+                   class="btn btn-secondary"
+                   asp-page-handler="BtGuardar" />
+        }
+
+
+        @if (rolId != "3")
+        {
+            <input id="flDocumento"
+                   placeholder="Cedula / Documento"
+                   asp-for="@Model.Filtro!._Cliente!.Documento" />
+        }
+
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+            @await Html.PartialAsync(
+                "/Pages/Emergentes/Mensajes.cshtml"
+            )
+        }
+
+
+        @if (Model.Formulario || Model.Borrar)
+        {
+            <input id="nmId"
+                   type="hidden"
+                   asp-for="@Model.Actual!.Id" />
+        }
+
+
+        @if (Model.Formulario)
+        {
+            <div>
+
+                <h3>
+                    Cita
+                </h3>
+
+
+
+
+                @if (rolId == "2")
+                {
+                    <label>
+                        Cliente
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.Actual?._Cliente?.Nombre @Model.Actual?._Cliente?.Apellido"
+                           readonly />
+
+                    <input type="hidden"
+                           asp-for="@Model.Actual!.Cliente" />
+
+                    <br />
+
+
+                    <label>
+                        Vehículo
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.Actual?._Vehiculo?.Placa"
+                           readonly />
+
+                    <input type="hidden"
+                           asp-for="@Model.Actual!.Vehiculo" />
+
+                    <br />
+
+
+                    <label>
+                        Horario Cita
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.Actual?._Horario_Cita?.Horario_Descripcion"
+                           readonly />
+
+                    <input type="hidden"
+                           asp-for="@Model.Actual!.Horario_Cita" />
+
+                    <br />
+
+
+                    <label>
+                        Motivo
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.Actual?.Motivo"
+                           readonly />
+
+                    <input type="hidden"
+                           asp-for="@Model.Actual!.Motivo" />
+
+                    <br />
+
+
+                    <label>
+                        Estado Cita
+                    </label>
+
+                    <select id="nmEstado_Cita"
+                            class="form-control"
+                            asp-for="@Model.Actual!.Estado_Cita"
+                            asp-items="@(new SelectList(Model.Estados_Citas, "Id", "Nombre_Estado"))">
+                    </select>
+
+                    <br />
+                }
+
+
+
+
+                @if (rolId == "1")
+                {
+                    <label>
+                        Cedula / Documento del Cliente
+                    </label>
+
+                    <input id="nmDocumentoCliente"
+                           class="form-control"
+                           asp-for="@Model.DocumentoCliente" />
+
+                    <br />
+
+                    <input type="submit"
+                           value="Cargar Cliente"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtCargarCliente" />
+
+                    <br />
+                    <br />
+
+                    var clienteSeleccionado =
+                        Model.Clientes
+                            .FirstOrDefault(x =>
+                                x.Id == Model.Actual!.Cliente);
+
+                    <input type="hidden"
+                           asp-for="@Model.Actual!.Cliente" />
+
+                    @if (clienteSeleccionado != null)
+                    {
+                        <label>
+                            Cliente
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               value="@clienteSeleccionado.Nombre @clienteSeleccionado.Apellido - @clienteSeleccionado.Documento"
+                               readonly />
+
+                        <br />
+
+                        <label>
+                            Vehiculo
+                        </label>
+
+                        <select id="nmVehiculo"
+                                class="form-control"
+                                asp-for="@Model.Actual!.Vehiculo">
+
+                            <option value="0">
+                                Seleccione un vehiculo
+                            </option>
+
+                            @foreach (var vehiculo in Model.Vehiculos)
+                            {
+                                <option value="@vehiculo.Id">
+                                    @vehiculo.Placa
+                                </option>
+                            }
+
+                        </select>
+
+                        <br />
+                    }
+                    else
+                    {
+                        <p>
+                            Ingrese la cedula del cliente y presione Cargar Cliente.
+                        </p>
+                    }
+
+                    <label>
+                        Horario Cita
+                    </label>
+
+                    <select id="nmHorario_Cita"
+                            class="form-control"
+                            asp-for="@Model.Actual!.Horario_Cita"
+                            asp-items="@(new SelectList(Model.Horarios, "Id", "Horario_Descripcion"))">
+                    </select>
+
+                    <br />
+
+                    <label>
+                        Motivo
+                    </label>
+
+                    <input id="nmMotivo"
+                           class="form-control"
+                           asp-for="@Model.Actual!.Motivo" />
+
+                    <br />
+
+                    <label>
+                        Estado Cita
+                    </label>
+
+                    <select id="nmEstado_Cita"
+                            class="form-control"
+                            asp-for="@Model.Actual!.Estado_Cita"
+                            asp-items="@(new SelectList(Model.Estados_Citas, "Id", "Nombre_Estado"))">
+                    </select>
+
+                    <br />
+                }
+
+
+
+                @if (rolId == "3")
+                {
+                    var clienteSesion =
+                        Model.Clientes
+                            .FirstOrDefault(x =>
+                                x.Id == Model.Actual!.Cliente);
+
+                    <label>
+                        Cliente
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           value="@clienteSesion?.Nombre @clienteSesion?.Apellido - @clienteSesion?.Documento"
+                           readonly />
+
+                    <input type="hidden"
+                           asp-for="@Model.Actual!.Cliente" />
+
+                    <br />
+
+                    <label>
+                        Vehiculo
+                    </label>
+
+                    <select id="nmVehiculo"
+                            class="form-control"
+                            asp-for="@Model.Actual!.Vehiculo">
+
+                        <option value="0">
+                            Seleccione un vehiculo
+                        </option>
+
+                        @foreach (var vehiculo in Model.Vehiculos)
+                        {
+                            <option value="@vehiculo.Id">
+                                @vehiculo.Placa
+                            </option>
+                        }
+
+                    </select>
+
+                    <br />
+
+                    <label>
+                        Horario Cita
+                    </label>
+
+                    <select id="nmHorario_Cita"
+                            class="form-control"
+                            asp-for="@Model.Actual!.Horario_Cita"
+                            asp-items="@(new SelectList(Model.Horarios, "Id", "Horario_Descripcion"))">
+                    </select>
+
+                    <br />
+
+                    <label>
+                        Motivo
+                    </label>
+
+                    <input id="nmMotivo"
+                           class="form-control"
+                           asp-for="@Model.Actual!.Motivo" />
+
+                    <br />
+
+                    var estadoActual =
+                        Model.Estados_Citas
+                            .FirstOrDefault(x =>
+                                x.Id == Model.Actual!.Estado_Cita)
+                            ?.Nombre_Estado
+                        ?? "Pendiente";
+
+                    <label>
+                        Estado Cita
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           value="@estadoActual"
+                           readonly />
+
+                    <input type="hidden"
+                           asp-for="@Model.Actual!.Estado_Cita" />
+
+                    <br />
+                }
+
+            </div>
+        }
+
+
+        @if (Model.Borrar &&
+             rolId == "1")
+        {
+            <div class="popup">
+
+                <div class="pp_del_inner">
+
+                    <h3>
+                        Mensaje
+                    </h3>
+
+                    <h4>
+                        ¿Desea borrar la entidad...?
+                    </h4>
+
+                    <h6>
+                        @Model.Actual?._Cliente?.Nombre
+                    </h6>
+
+                    <input type="submit"
+                           value="Cancelar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBuscar" />
+
+                    <input type="submit"
+                           value="Borrar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBorrar" />
+
+                </div>
+
+            </div>
+        }
+
+
+        @if (!Model.Formulario)
+        {
+            <div class="containers_vn panel panel-default">
+
+                <table class="tb_data table table-striped table-bordered table-hover">
+
+                    <tr>
+
+                        <th>
+                            Documento
+                        </th>
+
+                        <th>
+                            Cliente
+                        </th>
+
+                        <th>
+                            Vehículo
+                        </th>
+
+                        <th>
+                            Fecha Cita
+                        </th>
+
+                        <th>
+                            Hora Cita
+                        </th>
+
+                        <th>
+                            Motivo
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th>
+                            Acción
+                        </th>
+
+                    </tr>
+
+
+                    @if (Model != null &&
+                         Model.Lista != null)
+                    {
+                        foreach (var elemento in Model.Lista)
+                        {
+                            <tr>
+
+                                <td>
+                                    @elemento._Cliente?.Documento
+                                </td>
+
+                                <td>
+                                    @elemento._Cliente?.Nombre
+                                    @elemento._Cliente?.Apellido
+                                </td>
+
+
+                                <td>
+                                    @elemento._Vehiculo?.Placa
+                                </td>
+
+
+                                <td>
+                                    @elemento._Horario_Cita?.Fecha.ToString("dd/MM/yyyy")
+                                </td>
+
+
+                                <td>
+                                    @elemento._Horario_Cita?.Hora_Inicio.ToString("HH:mm")
+                                </td>
+
+
+                                <td>
+                                    @elemento.Motivo
+                                </td>
+
+
+                                <td>
+                                    @elemento._Estado_Cita?.Nombre_Estado
+                                </td>
+
+
+                                <td>
+
+                                    @if (rolId == "3")
+                                    {
+                                        @if (elemento._Estado_Cita?.Nombre_Estado != "Cancelada" &&
+                                             elemento._Estado_Cita?.Nombre_Estado != "Finalizada")
+                                        {
+                                            <input type="submit"
+                                                   value="Cancelar"
+                                                   class="btn btn-secondary"
+                                                   asp-page-handler="BtCancelar"
+                                                   asp-route-data="@elemento.Id" />
+                                        }
+                                    }
+
+
+                                    @if (rolId == "2")
+                                    {
+                                        <input type="submit"
+                                               value="Editar Estado"
+                                               class="btn btn-secondary"
+                                               asp-page-handler="BtEditar"
+                                               asp-route-data="@elemento.Id" />
+                                    }
+
+
+                                    @if (rolId == "1")
+                                    {
+                                        <input type="submit"
+                                               value="Editar"
+                                               class="btn btn-secondary"
+                                               asp-page-handler="BtEditar"
+                                               asp-route-data="@elemento.Id" />
+
+                                        <input type="submit"
+                                               value="Borrar"
+                                               class="btn btn-secondary"
+                                               asp-page-handler="BtPregBorrar"
+                                               asp-route-data="@elemento.Id" />
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</form>

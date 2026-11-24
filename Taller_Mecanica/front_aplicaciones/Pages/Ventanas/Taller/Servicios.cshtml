@@ -1,0 +1,381 @@
+﻿@page
+@model ServiciosModel
+ 
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Servicios";
+
+    var rolId =
+        ViewContext.HttpContext.Session.GetString("RolId");
+}
+
+
+<form method="post"
+      enctype="multipart/form-data">
+
+    <div class="text-center">
+
+        <h1 class="display-4">
+            Servicios
+        </h1>
+
+
+  
+
+        <input type="submit"
+               value="Buscar"
+               class="btn btn-secondary"
+               asp-page-handler="BtBuscar" />
+
+
+
+        @if (rolId == "1")
+        {
+            <input type="submit"
+                   value="Nuevo"
+                   class="btn btn-secondary"
+                   asp-page-handler="BtNuevo" />
+        }
+
+
+
+        @if (rolId == "1" &&
+             Model.Formulario)
+        {
+            <input type="submit"
+                   value="Guardar"
+                   class="btn btn-secondary"
+                   asp-page-handler="BtGuardar" />
+        }
+
+
+        <input id="flNombre"
+               placeholder="Nombre servicio"
+               asp-for="@Model.Filtro!.Nombre_Servicio" />
+
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+            @await Html.PartialAsync(
+                "/Pages/Emergentes/Mensajes.cshtml"
+            )
+        }
+
+
+
+        @if ((Model.Formulario || Model.Borrar) &&
+             rolId == "1")
+        {
+            <input id="nmId"
+                   type="hidden"
+                   asp-for="@Model.Actual!.Id" />
+
+
+            <input type="hidden"
+                   asp-for="@Model.Actual!.Imagen" />
+        }
+
+
+
+
+        @if (Model.Formulario &&
+             rolId == "1")
+        {
+            <div>
+
+                <h3>
+                    Servicio
+                </h3>
+
+
+
+
+                <label>
+                    Imagen
+                </label>
+
+                <br />
+
+
+                @if (!string.IsNullOrEmpty(
+                    Model.Actual?.Imagen))
+                {
+                    <img height="100"
+                         width="100"
+                         style="object-fit:cover;"
+                         src="data:image;base64,@Model.Actual.Imagen" />
+
+                    <br />
+                    <br />
+                }
+
+
+                <input type="file"
+                       class="form-control"
+                       asp-for="FormFile"
+                       accept="image/*" />
+
+                <br />
+
+
+
+                <label>
+                    Nombre Servicio
+                </label>
+
+                <input id="nmNombre_Servicio"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Nombre_Servicio" />
+
+                <br />
+
+
+
+
+                <label>
+                    Descripción
+                </label>
+
+                <input id="nmDescripcion"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Descripcion" />
+
+                <br />
+
+
+
+
+                <label>
+                    Precio Base
+                </label>
+
+                <input id="nmPrecio_Base"
+                       type="number"
+                       step="0.01"
+                       min="0"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Precio_Base" />
+
+                <br />
+
+
+
+
+                <label>
+                    Tiempo Estimado
+                </label>
+
+                <input id="nmTiempo_Estimado"
+                       type="time"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Tiempo_Estimado"
+                       asp-format="{0:HH:mm}" />
+
+                <br />
+
+
+
+
+                <div>
+
+                    <input id="nmEstado"
+                           type="checkbox"
+                           asp-for="@Model.Actual!.Estado" />
+
+                    <label for="nmEstado">
+                        Activo
+                    </label>
+
+                </div>
+
+                <br />
+
+            </div>
+        }
+
+
+
+
+        @if (Model.Borrar &&
+             rolId == "1")
+        {
+            <div class="popup">
+
+                <div class="pp_del_inner">
+
+                    <h3>
+                        Mensaje
+                    </h3>
+
+
+                    <h4>
+                        ¿Desea desactivar el servicio?
+                    </h4>
+
+
+                    <h6>
+                        @Model.Actual?.Nombre_Servicio
+                    </h6>
+
+
+                    <input type="submit"
+                           value="Cancelar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBuscar" />
+
+
+
+                    <input type="submit"
+                           value="Desactivar"
+                           class="btn btn-danger"
+                           asp-page-handler="BtBorrar" />
+
+                </div>
+
+            </div>
+        }
+
+
+
+
+        @if (!Model.Formulario)
+        {
+            <div class="containers_vn panel panel-default"
+                 style="overflow-x:auto">
+
+                <table class="tb_data table table-striped table-bordered table-hover">
+
+                    <tr>
+
+                        <th>
+                            Imagen
+                        </th>
+
+                        <th>
+                            Nombre Servicio
+                        </th>
+
+                        <th>
+                            Descripción
+                        </th>
+
+                        <th>
+                            Precio Base
+                        </th>
+
+                        <th>
+                            Tiempo Estimado
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+
+                        @if (rolId == "1")
+                        {
+                            <th>
+                                Acción
+                            </th>
+                        }
+
+                    </tr>
+
+
+                    @if (Model.Lista != null)
+                    {
+                        foreach (var elemento in Model.Lista)
+                        {
+                            <tr>
+
+
+
+                                <td>
+
+                                    @if (!string.IsNullOrEmpty(
+                                        elemento.Imagen))
+                                    {
+                                        <img height="60"
+                                             width="60"
+                                             style="object-fit:cover;"
+                                             src="data:image;base64,@elemento.Imagen" />
+                                    }
+
+                                </td>
+
+
+                                <td>
+                                    @elemento.Nombre_Servicio
+                                </td>
+
+
+                                <td>
+                                    @elemento.Descripcion
+                                </td>
+
+
+                                <td>
+                                    @elemento.Precio_Base
+                                </td>
+
+
+                                <td>
+                                    @elemento.Tiempo_Estimado.ToString("HH:mm")
+                                </td>
+
+
+                                <td>
+
+                                    @if (elemento.Estado)
+                                    {
+                                        <span>
+                                            Activo
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            Inactivo
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                @if (rolId == "1")
+                                {
+                                    <td>
+
+                                        <input type="submit"
+                                               value="Editar"
+                                               class="btn btn-secondary"
+                                               asp-page-handler="BtEditar"
+                                               asp-route-data="@elemento.Id" />
+
+
+
+                                        @if (elemento.Estado)
+                                        {
+                                            <input type="submit"
+                                                   value="Desactivar"
+                                                   class="btn btn-danger"
+                                                   asp-page-handler="BtPregBorrar"
+                                                   asp-route-data="@elemento.Id" />
+                                        }
+
+                                    </td>
+                                }
+
+                            </tr>
+                        }
+                    }
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</form>

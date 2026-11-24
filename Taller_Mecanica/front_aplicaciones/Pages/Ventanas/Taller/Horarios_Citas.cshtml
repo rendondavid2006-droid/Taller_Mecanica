@@ -1,0 +1,180 @@
+﻿@page
+@model Horarios_CitasModel
+
+@{
+    ViewData["Title"] = "Horarios de Citas";
+}
+
+<form method="post">
+
+    <div class="text-center">
+
+        <h1 class="display-4">
+            Horarios de Citas
+        </h1>
+
+        <input type="submit"
+               value="Buscar"
+               class="btn btn-secondary"
+               asp-page-handler="BtBuscar" />
+
+        <input type="submit"
+               value="Nuevo"
+               class="btn btn-secondary"
+               asp-page-handler="BtNuevo" />
+
+        <input type="submit"
+               value="Guardar"
+               class="btn btn-secondary"
+               asp-page-handler="BtGuardar" />
+
+        <input type="date"
+               asp-for="@Model.Filtro!.Fecha" />
+
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+            @await Html.PartialAsync(
+                "/Pages/Emergentes/Mensajes.cshtml"
+            )
+        }
+
+
+        @if (Model.Formulario || Model.Borrar)
+        {
+            <input type="hidden"
+                   asp-for="@Model.Actual!.Id" />
+        }
+
+
+        @if (Model.Formulario)
+        {
+            <div>
+
+                <h3>Horario de Cita</h3>
+
+                <label>Fecha</label>
+
+                <input type="date"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Fecha" />
+
+                <br />
+
+                <label>Hora Inicio</label>
+
+                <input type="time"
+                       class="form-control"
+                       asp-for="@Model.Hora_Inicio_Texto" />
+
+                <br />
+
+                <label>Hora Fin</label>
+
+                <input type="time"
+                       class="form-control"
+                       asp-for="@Model.Hora_Fin_Texto" />
+
+                <br />
+
+                <label>Disponible</label>
+
+                <input asp-for="@Model.Actual!.Disponible" />
+
+                <br />
+
+            </div>
+        }
+
+
+        @if (Model.Borrar)
+        {
+            <div class="popup">
+                <div class="pp_del_inner">
+
+                    <h3>Mensaje</h3>
+
+                    <h4>
+                        ¿Desea borrar el horario...?
+                    </h4>
+
+                    <h6>
+                        @Model.Actual?.Horario_Descripcion
+                    </h6>
+
+                    <input type="submit"
+                           value="Cancelar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBuscar" />
+
+                    <input type="submit"
+                           value="Borrar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBorrar" />
+
+                </div>
+            </div>
+        }
+
+
+        @if (!Model.Formulario)
+        {
+            <div class="containers_vn panel panel-default">
+
+                <table class="tb_data table table-striped table-bordered table-hover">
+
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Hora Inicio</th>
+                        <th>Hora Fin</th>
+                        <th>Disponible</th>
+                        <th>Acción</th>
+                    </tr>
+
+                    @foreach (var elemento in Model.Lista)
+                    {
+                        <tr>
+
+                            <td>
+                                @elemento.Fecha.ToString("dd/MM/yyyy")
+                            </td>
+
+                            <td>
+                                @elemento.Hora_Inicio.ToString("HH:mm")
+                            </td>
+
+                            <td>
+                                @elemento.Hora_Fin.ToString("HH:mm")
+                            </td>
+
+                            <td>
+                                @elemento.Disponible
+                            </td>
+
+                            <td>
+
+                                <input type="submit"
+                                       value="Editar"
+                                       class="btn btn-secondary"
+                                       asp-page-handler="BtEditar"
+                                       asp-route-data="@elemento.Id" />
+
+                                <input type="submit"
+                                       value="Borrar"
+                                       class="btn btn-secondary"
+                                       asp-page-handler="BtPregBorrar"
+                                       asp-route-data="@elemento.Id" />
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</form>

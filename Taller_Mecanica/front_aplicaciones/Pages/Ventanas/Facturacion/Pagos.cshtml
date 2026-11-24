@@ -1,0 +1,209 @@
+@page
+@model PagosModel
+@{
+    ViewData["Title"] = "Pagos";
+}
+<form method="post"
+    enctype="multipart/form-data">
+
+    <div class="text-center">
+        <h1 class="display-4">Pagos</h1>
+
+        <input type="submit"
+            value="Buscar"
+            class="btn btn-secondary"
+            asp-page-handler="BtBuscar"/>
+        <input type="submit"
+            value="Nuevo"
+            class="btn btn-secondary"
+            asp-page-handler="BtNuevo"/>
+        @if (Model.Formulario)
+        {
+            <input type="submit"
+                value="Guardar"
+                class="btn btn-secondary"
+                asp-page-handler="BtGuardar"/>
+        }
+        <input id="flDocumento"
+            placeholder="Documento cliente"
+               asp-for="@Model.Filtro!._Factura!._Cliente!.Documento" />
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+          @await Html.PartialAsync("/Pages/Emergentes/Mensajes.cshtml");
+        }
+
+        @if (Model.Formulario || Model.Borrar)
+        {
+            <input id="nmId"
+                type="hidden"
+                asp-for="@Model.Actual!.Id" />
+        }
+
+        @if (Model.Formulario)
+        {
+            <div>
+                <h3>Pago</h3>
+                
+                <label>
+                    Factura
+                </label>
+                <select id="nmFactura"
+                        class="form-control"
+                        asp-for="@Model.Actual!.Factura"
+                        onchange="cargarMontoFactura()">
+                    <option value="0">Seleccione una factura</option>
+                    @foreach (var factura in Model.Facturas)
+                    {
+                        if (Model.Actual?.Factura == factura.Id)
+                        {
+                            <option value="@factura.Id" data-total="@factura.Total.ToString(System.Globalization.CultureInfo.InvariantCulture)" selected>
+                                @factura._Cliente?.Documento - @factura._Cliente?.Nombre @factura._Cliente?.Apellido - $@factura.Total
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@factura.Id" data-total="@factura.Total.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                                @factura._Cliente?.Documento - @factura._Cliente?.Nombre @factura._Cliente?.Apellido - $@factura.Total
+                            </option>
+                        }
+                    }
+                </select>
+                <br/>
+
+                <label>
+                    Fecha Pago
+                </label>
+                <input id="nmFecha_Pago"
+                    asp-for="@Model.Actual!.Fecha_Pago" />
+                <br />
+
+                <label>
+                    Monto
+                </label>
+                <input id="nmMonto"
+                    asp-for="@Model.Actual!.Monto" readonly />
+                <br />
+
+                <label>
+                    Metodo Pago
+                </label>
+                <input id="nmMetodo_Pago"
+                    asp-for="@Model.Actual!.Metodo_Pago" />
+                <br />
+
+                <label>
+                    Referencia Pago
+                </label>
+                <input id="nmReferencia_Pago"
+                       asp-for="@Model.Actual!.Referencia_Pago" />
+                <br />
+
+                <label>
+                    Estado
+                </label>
+                <select id="nmEstado" class="form-control" asp-for="@Model.Actual!.Estado">
+                    <option value="">Seleccione un estado</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Pagada">Pagada</option>
+                    <option value="Completado">Completado</option>
+                </select>
+                <br />
+            </div>
+        }
+        
+        @if (Model.Borrar)
+        {
+            <div class="popup">
+                <div class="pp_del_inner">
+                    <h3>Mensaje</h3>
+
+                    <h4>
+                        ¿Desea borrar la entidad...?
+                    </h4>
+                    <h6>
+                        @Model.Actual!._Factura!._Cliente!.Nombre,
+                    </h6>
+                    <input type="submit"
+                        value="Cancelar"
+                        class="btn btn-secondary"
+                        asp-page-handler="BtBuscar" />
+                    <input type="submit"
+                        value="Borrar"
+                        class="btn btn-secondary"
+                        asp-page-handler="BtBorrar" />
+                </div>
+            </div>
+        }
+
+        @if (!Model.Formulario)
+        {
+            <div class="containers_vn panel panel-default">
+                <table class="tb_data table table-striped table-bordered table-hover">
+                    <tr>
+                        <th>Factura</th>
+                        <th>Fecha Pago</th>
+                        <th>Monto</th>
+                        <th>Metodo Pago</th>
+                        <th>Referencia Pago</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                    @if (Model != null && Model.Lista != null)
+                    {
+                        foreach (var elemento in Model.Lista)
+                        {
+                            <tr>
+                                <td>
+                                    @{
+                                        var factura =
+                                            Model.Facturas
+                                                .FirstOrDefault(
+                                                    x => x.Id == elemento.Factura);
+                                    }
+                                    @if (factura != null)
+                                    {
+                                        <span>
+                                            @factura._Cliente?.Documento -
+                                            @factura._Cliente?.Nombre
+                                            @factura._Cliente?.Apellido -
+                                            $@factura.Total
+                                        </span>
+                                    }
+                                </td>
+                                <td>@elemento.Fecha_Pago</td>
+                                <td>@elemento.Monto</td>
+                                <td>@elemento.Metodo_Pago</td>
+                                <td>@elemento.Referencia_Pago</td>
+                                <td>@elemento.Estado</td>
+                                <td>
+                                    <input type="submit" 
+                                        value="Editar"
+                                        class="btn btn-secondary"
+                                        asp-page-handler="BtEditar"
+                                        asp-route-data="@elemento.Id" />
+                                    <input type="submit" 
+                                        value="Borrar"
+                                        class="btn btn-secondary"
+                                        asp-page-handler="BtPregBorrar"
+                                        asp-route-data="@elemento.Id" />
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        }
+
+    </div>
+</form>
+<script>
+ 
+    function cargarMontoFactura() {
+        const lista = document.getElementById("nmFactura");
+        const monto = document.getElementById("nmMonto");
+        if (!lista || !monto) return;
+        const opcion = lista.options[lista.selectedIndex];
+        monto.value = Number(opcion?.dataset.total || 0).toFixed(2);
+    }
+</script>

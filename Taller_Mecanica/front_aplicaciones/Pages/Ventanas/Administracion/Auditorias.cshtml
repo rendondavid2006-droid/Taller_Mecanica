@@ -1,0 +1,137 @@
+﻿@page
+@model AuditoriasModel
+
+@{
+    ViewData["Title"] = "Auditorias";
+}
+
+
+<form method="post"
+      enctype="multipart/form-data">
+
+    <div class="text-center">
+
+        <h1 class="display-4">
+            Auditorias
+        </h1>
+
+
+
+        <input type="submit"
+               value="Buscar"
+               class="btn btn-secondary"
+               asp-page-handler="BtBuscar" />
+
+
+
+         
+        <input type="submit"
+               value="Descargar JSON"
+               class="btn btn-success"
+               asp-page-handler="BtDescargarJson" />
+
+
+
+         
+        <input type="submit"
+               value="Descargar Excel"
+               class="btn btn-success"
+               asp-page-handler="BtDescargarExcel" />
+
+
+
+        <input id="flTabla"
+               placeholder="Tabla"
+               asp-for="@Model.Filtro!.Tabla" />
+
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+            @await Html.PartialAsync(
+                "/Pages/Emergentes/Mensajes.cshtml"
+            )
+        }
+
+
+
+        <div class="containers_vn panel panel-default"
+             style="overflow-x:auto">
+
+            <table class="tb_data table table-striped table-bordered table-hover">
+
+                <tr>
+
+                    <th>
+                        Fecha
+                    </th>
+
+                    <th>
+                        Tabla
+                    </th>
+
+                    <th>
+                        Registro
+                    </th>
+
+                    <th>
+                        Acción
+                    </th>
+
+                    <th>
+                        Descripción
+                    </th>
+
+                    <th>
+                        Usuario
+                    </th>
+
+                </tr>
+
+
+                @if (Model.Lista != null)
+                {
+                    foreach (var elemento in Model.Lista)
+                    {
+                        <tr>
+
+                            <td>
+                                @elemento.Fecha.ToString(
+                                    "yyyy-MM-dd HH:mm:ss")
+                            </td>
+
+
+                            <td>
+                                @elemento.Tabla
+                            </td>
+
+
+                            <td>
+                                @elemento.RegistroId
+                            </td>
+
+
+                            <td>
+                                @elemento.Accion
+                            </td>
+
+
+                            <td>
+                                @elemento.Descripcion
+                            </td>
+
+
+                            <td>
+                                @elemento.Usuario
+                            </td>
+
+                        </tr>
+                    }
+                }
+
+            </table>
+
+        </div>
+
+    </div>
+
+</form>

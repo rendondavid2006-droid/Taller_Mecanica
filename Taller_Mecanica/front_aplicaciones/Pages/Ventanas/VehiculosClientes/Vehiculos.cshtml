@@ -1,0 +1,384 @@
+﻿@page
+@model VehiculosModel
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Vehículos";
+
+    var rolId =
+        ViewContext.HttpContext.Session.GetString("RolId");
+}
+
+<form method="post"
+      enctype="multipart/form-data">
+
+    <div class="text-center">
+
+        <h1 class="display-4">
+            Vehículos
+        </h1>
+
+
+        <input type="submit"
+               value="Buscar"
+               class="btn btn-secondary"
+               asp-page-handler="BtBuscar" />
+
+
+        @if (rolId == "1")
+        {
+            <input type="submit"
+                   value="Nuevo"
+                   class="btn btn-secondary"
+                   asp-page-handler="BtNuevo" />
+        }
+
+
+        @if (rolId == "1" &&
+             Model.Formulario)
+        {
+            <input type="submit"
+                   value="Guardar"
+                   class="btn btn-secondary"
+                   asp-page-handler="BtGuardar" />
+        }
+
+
+        <input id="flPlaca"
+               placeholder="Placa"
+               asp-for="@Model.Filtro!.Placa" />
+
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+            @await Html.PartialAsync(
+                "/Pages/Emergentes/Mensajes.cshtml"
+            )
+        }
+
+
+        @if ((Model.Formulario || Model.Borrar) &&
+             rolId == "1")
+        {
+            <input id="nmId"
+                   type="hidden"
+                   asp-for="@Model.Actual!.Id" />
+        }
+
+
+
+
+        @if (Model.Formulario &&
+             rolId == "1")
+        {
+            <div>
+
+                <h3>
+                    Vehículo
+                </h3>
+
+
+
+                 
+                <label for="nmDocumentoCliente">Cédula del cliente</label>
+                <input id="nmDocumentoCliente"
+                       class="form-control"
+                       placeholder="Escriba la cédula"
+                       asp-for="@Model.DocumentoCliente" />
+                <br />
+                <button type="submit"
+                        class="btn btn-secondary"
+                        asp-page-handler="BtBuscarCliente">Buscar cliente</button>
+                <input type="hidden" asp-for="@Model.Actual!.Cliente" />
+                <br /><br />
+
+                @if (Model.ClienteEncontrado != null)
+                {
+                    <div class="alert alert-info text-start">
+                        <strong>Cliente encontrado</strong>
+                        <p class="mb-1">Documento: @Model.ClienteEncontrado.Documento</p>
+                        <p class="mb-1">Nombre: @Model.ClienteEncontrado.Nombre @Model.ClienteEncontrado.Apellido</p>
+                        <p class="mb-1">Teléfono: @Model.ClienteEncontrado.Telefono</p>
+                        <p class="mb-1">Correo: @Model.ClienteEncontrado.Correo</p>
+                        <p class="mb-0">Dirección: @Model.ClienteEncontrado.Direccion</p>
+                    </div>
+                }
+                <br />
+
+                <label>
+                    Modelo
+                </label>
+
+                <select id="nmModelo"
+                        class="form-control"
+                        asp-for="@Model.Actual!.Modelo">
+
+                    <option value="0">
+                        Seleccione un modelo
+                    </option>
+
+                    @foreach (var modelo in Model.Modelos)
+                    {
+                        if (Model.Actual?.Modelo == modelo.Id)
+                        {
+                            <option value="@modelo.Id"
+                                    selected>
+                                @modelo.Nombre_Modelo
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@modelo.Id">
+                                @modelo.Nombre_Modelo
+                            </option>
+                        }
+                    }
+
+                </select>
+
+                <br />
+
+
+
+
+                <label>
+                    Placa
+                </label>
+
+                <input id="nmPlaca"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Placa" />
+
+                <br />
+
+
+
+
+                <label>
+                    Año
+                </label>
+
+                <input id="nmAño"
+                       type="number"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Año" />
+
+                <br />
+
+
+
+
+                <label>
+                    Color
+                </label>
+
+                <input id="nmColor"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Color" />
+
+                <br />
+
+
+
+
+                <label>
+                    Kilometraje
+                </label>
+
+                <input id="nmKilometraje"
+                       type="number"
+                       min="0"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Kilometraje" />
+
+                <br />
+
+            </div>
+        }
+
+
+
+        @if (Model.Borrar &&
+             rolId == "1")
+        {
+            <div class="popup">
+
+                <div class="pp_del_inner">
+
+                    <h3>
+                        Mensaje
+                    </h3>
+
+                    <h4>
+                        ¿Desea borrar el vehículo?
+                    </h4>
+
+                    <h6>
+                        @Model.Actual?.Placa
+                    </h6>
+
+
+                    <input type="submit"
+                           value="Cancelar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBuscar" />
+
+
+                    <input type="submit"
+                           value="Borrar"
+                           class="btn btn-danger"
+                           asp-page-handler="BtBorrar" />
+
+                </div>
+
+            </div>
+        }
+
+
+
+        @if (!Model.Formulario)
+        {
+            <div class="containers_vn panel panel-default"
+                 style="overflow-x:auto">
+
+                <table class="tb_data table table-striped table-bordered table-hover">
+
+                    <tr>
+
+                        <th>
+                            Cliente
+                        </th>
+
+                        <th>
+                            Modelo
+                        </th>
+
+                        <th>
+                            Placa
+                        </th>
+
+                        <th>
+                            Año
+                        </th>
+
+                        <th>
+                            Color
+                        </th>
+
+                        <th>
+                            Kilometraje
+                        </th>
+
+
+                        @if (rolId == "1")
+                        {
+                            <th>
+                                Acción
+                            </th>
+                        }
+
+                    </tr>
+
+
+                    @if (Model.Lista != null)
+                    {
+                        foreach (var elemento in Model.Lista)
+                        {
+                            var cliente =
+                                Model.Clientes
+                                    .FirstOrDefault(
+                                        x =>
+                                            x.Id ==
+                                            elemento.Cliente);
+
+
+                            var modelo =
+                                Model.Modelos
+                                    .FirstOrDefault(
+                                        x =>
+                                            x.Id ==
+                                            elemento.Modelo);
+
+
+                            <tr>
+
+                                <td>
+                                    @if (cliente != null)
+                                    {
+                                        @cliente.Nombre
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            Cliente #@elemento.Cliente
+                                        </span>
+                                    }
+                                </td>
+
+
+                                <td>
+                                    @if (modelo != null)
+                                    {
+                                        @modelo.Nombre_Modelo
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            Modelo #@elemento.Modelo
+                                        </span>
+                                    }
+                                </td>
+
+
+                                <td>
+                                    @elemento.Placa
+                                </td>
+
+
+                                <td>
+                                    @elemento.Año
+                                </td>
+
+
+                                <td>
+                                    @elemento.Color
+                                </td>
+
+
+                                <td>
+                                    @elemento.Kilometraje
+                                </td>
+
+
+                                @if (rolId == "1")
+                                {
+                                    <td>
+
+                                        <input type="submit"
+                                               value="Editar"
+                                               class="btn btn-secondary"
+                                               asp-page-handler="BtEditar"
+                                               asp-route-data="@elemento.Id" />
+
+
+                                        <input type="submit"
+                                               value="Borrar"
+                                               class="btn btn-danger"
+                                               asp-page-handler="BtPregBorrar"
+                                               asp-route-data="@elemento.Id" />
+
+                                    </td>
+                                }
+
+                            </tr>
+                        }
+                    }
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</form>

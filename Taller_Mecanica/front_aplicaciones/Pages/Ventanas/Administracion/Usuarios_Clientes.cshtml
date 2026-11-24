@@ -1,0 +1,236 @@
+﻿@page
+@model Usuarios_ClientesModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Usuarios Clientes";
+}
+
+<form method="post">
+
+    <div class="text-center">
+
+        <h1 class="display-4">
+            Usuarios Clientes
+        </h1>
+
+        <div class="tm-crud-toolbar">
+            <input type="submit"
+                   value="Buscar"
+                   class="btn btn-secondary tm-btn tm-btn-primary"
+                   asp-page-handler="BtBuscar" />
+
+            <input type="submit"
+                   value="Nuevo"
+                   class="btn btn-secondary tm-btn tm-btn-primary"
+                   asp-page-handler="BtNuevo" />
+
+            @if (Model.Formulario)
+            {
+                <input type="submit"
+                       value="Guardar"
+                       class="btn btn-secondary tm-btn tm-btn-primary"
+                       asp-page-handler="BtGuardar" />
+            }
+
+            <input id="flNombreUsuario"
+                   class="tm-search"
+                   placeholder="Buscar por usuario"
+                   aria-label="Buscar usuario cliente"
+                   asp-for="@Model.Filtro!.Nombre_Usuario" />
+        </div>
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+            @await Html.PartialAsync(
+                "/Pages/Emergentes/Mensajes.cshtml"
+            )
+        }
+
+
+        @if (Model.Formulario || Model.Borrar)
+        {
+            <input type="hidden"
+                   asp-for="@Model.Actual!.Id" />
+
+            <input type="hidden"
+                   asp-for="@Model.Actual!.Rol" />
+
+            <input type="hidden"
+                   asp-for="@Model.Actual!.Fecha_Creacion" />
+        }
+
+
+        @if (Model.Formulario)
+        {
+            <div>
+
+                <h3>Usuario Cliente</h3>
+
+                 
+                <label for="nmDocumentoCliente">Cédula del cliente</label>
+
+                <input id="nmDocumentoCliente"
+                       class="form-control"
+                       maxlength="15"
+                       placeholder="Escriba la cédula"
+                       asp-for="@Model.DocumentoCliente" />
+
+                <br />
+
+                <button type="submit"
+                        class="btn btn-secondary tm-btn tm-btn-primary"
+                        asp-page-handler="BtBuscarCliente">Buscar cliente</button>
+
+                <input type="hidden"
+                       asp-for="@Model.Actual!.Cliente" />
+
+                <br /><br />
+
+                @if (Model.ClienteEncontrado != null)
+                {
+                    <div class="alert alert-info text-start">
+                        <strong>Cliente encontrado</strong>
+                        <p class="mb-1">Documento: @Model.ClienteEncontrado.Documento</p>
+                        <p class="mb-1">Nombre: @Model.ClienteEncontrado.Nombre @Model.ClienteEncontrado.Apellido</p>
+                        <p class="mb-1">Teléfono: @Model.ClienteEncontrado.Telefono</p>
+                        <p class="mb-1">Correo: @Model.ClienteEncontrado.Correo</p>
+                        <p class="mb-0">Dirección: @Model.ClienteEncontrado.Direccion</p>
+                    </div>
+                }
+
+                <label>Rol</label>
+
+                <input class="form-control"
+                       value="Cliente"
+                       readonly />
+
+                <br />
+
+                <label>Nombre Usuario</label>
+
+                <input class="form-control"
+                       asp-for="@Model.Actual!.Nombre_Usuario" />
+
+                <br />
+
+                <label>Contraseña</label>
+
+                <input type="password"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Contraseña" />
+
+                <br />
+
+                <label>Estado</label>
+
+                <input asp-for="@Model.Actual!.Estado" />
+
+                <br />
+
+            </div>
+        }
+
+
+        @if (Model.Borrar)
+        {
+            <div class="popup">
+                <div class="pp_del_inner">
+
+                    <h3>Mensaje</h3>
+
+                    <h4>
+                        ¿Desea borrar el usuario cliente...?
+                    </h4>
+
+                    <h6>
+                        @Model.Actual?.Nombre_Usuario
+                    </h6>
+
+                    <input type="submit"
+                           value="Cancelar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBuscar" />
+
+                    <input type="submit"
+                           value="Borrar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBorrar" />
+
+                </div>
+            </div>
+        }
+
+
+        @if (!Model.Formulario)
+        {
+            <div class="containers_vn panel panel-default">
+
+                <table class="tb_data table table-striped table-bordered table-hover">
+
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Documento</th>
+                        <th>Rol</th>
+                        <th>Usuario</th>
+                        <th>Estado</th>
+                        <th>Fecha Creacion</th>
+                        <th>Acción</th>
+                    </tr>
+
+                    @foreach (var elemento in Model.Lista)
+                    {
+                        <tr>
+
+                            <td>
+                                @elemento._Cliente?.Nombre
+                                @elemento._Cliente?.Apellido
+                            </td>
+
+                            <td>
+                                @elemento._Cliente?.Documento
+                            </td>
+
+                            <td>
+                                @elemento._Rol?.Nombre_Rol
+                            </td>
+
+                            <td>
+                                @elemento.Nombre_Usuario
+                            </td>
+
+                            <td>
+                                @elemento.Estado
+                            </td>
+
+                            <td>
+                                @elemento.Fecha_Creacion.ToString("dd/MM/yyyy")
+                            </td>
+
+                            <td>
+
+                                <input type="submit"
+                                       value="Editar"
+                                       class="btn btn-secondary"
+                                       asp-page-handler="BtEditar"
+                                       asp-route-data="@elemento.Id" />
+
+                                <input type="submit"
+                                       value="Borrar"
+                                       class="btn btn-secondary"
+                                       asp-page-handler="BtPregBorrar"
+                                       asp-route-data="@elemento.Id" />
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</form>
