@@ -1,0 +1,291 @@
+﻿@page
+@model Estados_OrdenesModel
+
+@{
+    ViewData["Title"] = "Estados de Órdenes";
+}
+
+<form method="post"
+      enctype="multipart/form-data">
+
+    <div class="text-center">
+
+        <h1 class="display-4">
+            Estados de Órdenes
+        </h1>
+
+
+        <input type="submit"
+               value="Buscar"
+               class="btn btn-secondary"
+               asp-page-handler="BtBuscar" />
+
+
+        <input type="submit"
+               value="Nuevo"
+               class="btn btn-secondary"
+               asp-page-handler="BtNuevo" />
+
+
+        @if (Model.Formulario)
+        {
+            <input type="submit"
+                   value="Guardar"
+                   class="btn btn-secondary"
+                   asp-page-handler="BtGuardar" />
+        }
+
+
+        <input id="flNombre"
+               placeholder="Nombre Estado"
+               asp-for="@Model.Filtro!.Nombre_Estado" />
+
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+            @await Html.PartialAsync(
+                "/Pages/Emergentes/Mensajes.cshtml"
+            )
+        }
+
+
+        @if (Model.Formulario || Model.Borrar)
+        {
+            <input id="nmId"
+                   type="hidden"
+                   asp-for="@Model.Actual!.Id" />
+        }
+
+
+
+
+        @if (Model.Formulario)
+        {
+            <div>
+
+                <h3>
+                    Estado de Orden
+                </h3>
+
+
+                <label>
+                    Nombre Estado
+                </label>
+
+                <input id="nmNombre_Estado"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Nombre_Estado" />
+
+                <br />
+
+
+                <label>
+                    Descripción
+                </label>
+
+                <input id="nmDescripcion"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Descripcion" />
+
+                <br />
+
+
+                <label>
+                    Etapa del Proceso
+                </label>
+
+                <select id="nmOrden_Proceso"
+                        class="form-control"
+                        asp-for="@Model.Actual!.Orden_Proceso">
+
+                    <option value="0">
+                        Seleccione una etapa
+                    </option>
+
+                    <option value="1">
+                        Inicio
+                    </option>
+
+                    <option value="2">
+                        En proceso
+                    </option>
+
+                    <option value="3">
+                        Final
+                    </option>
+
+                </select>
+
+                <br />
+                <br />
+
+
+                <div>
+
+                    <input id="nmEstado"
+                           type="checkbox"
+                           asp-for="@Model.Actual!.Estado" />
+
+                    <label for="nmEstado">
+                        Activo
+                    </label>
+
+                </div>
+
+                <br />
+
+            </div>
+        }
+
+
+
+
+        @if (Model.Borrar)
+        {
+            <div class="popup">
+
+                <div class="pp_del_inner">
+
+                    <h3>
+                        Mensaje
+                    </h3>
+
+                    <h4>
+                        ¿Desea borrar el estado de orden?
+                    </h4>
+
+                    <h6>
+                        @Model.Actual!.Nombre_Estado
+                    </h6>
+
+
+                    <input type="submit"
+                           value="Cancelar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBuscar" />
+
+
+                    <input type="submit"
+                           value="Borrar"
+                           class="btn btn-danger"
+                           asp-page-handler="BtBorrar" />
+
+                </div>
+
+            </div>
+        }
+
+
+
+
+        @if (!Model.Formulario)
+        {
+            <div class="containers_vn panel panel-default">
+
+                <table class="tb_data table table-striped table-bordered table-hover">
+
+                    <tr>
+
+                        <th>
+                            Nombre Estado
+                        </th>
+
+                        <th>
+                            Descripción
+                        </th>
+
+                        <th>
+                            Etapa del Proceso
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th>
+                            Acción
+                        </th>
+
+                    </tr>
+
+
+                    @if (Model.Lista != null)
+                    {
+                        foreach (var elemento in Model.Lista)
+                        {
+                            <tr>
+
+                                <td>
+                                    @elemento.Nombre_Estado
+                                </td>
+
+
+                                <td>
+                                    @elemento.Descripcion
+                                </td>
+
+
+                                <td>
+                                    @switch (elemento.Orden_Proceso)
+                                    {
+                                        case 1:
+                                            <span>Inicio</span>
+                                            break;
+                                        case 2:
+                                            <span>En proceso</span>
+                                            break;
+                                        case 3:
+                                            <span>Final</span>
+                                            break;
+                                        default:
+                                            <span>Sin definir</span>
+                                            break;
+                                    }
+                                </td>
+
+
+                                <td>
+                                    @if (elemento.Estado)
+                                    {
+                                        <span>
+                                            Activo
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            Inactivo
+                                        </span>
+                                    }
+                                </td>
+
+
+                                <td>
+
+                                    <input type="submit"
+                                           value="Editar"
+                                           class="btn btn-secondary"
+                                           asp-page-handler="BtEditar"
+                                           asp-route-data="@elemento.Id" />
+
+
+                                    <input type="submit"
+                                           value="Borrar"
+                                           class="btn btn-danger"
+                                           asp-page-handler="BtPregBorrar"
+                                           asp-route-data="@elemento.Id" />
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</form>

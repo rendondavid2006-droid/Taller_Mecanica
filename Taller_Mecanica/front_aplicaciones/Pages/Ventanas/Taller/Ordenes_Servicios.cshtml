@@ -1,0 +1,479 @@
+﻿@page
+@model Ordenes_ServiciosModel
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Órdenes de Servicio";
+
+    var rolId =
+        ViewContext.HttpContext.Session.GetString("RolId");
+}
+
+<form method="post"
+      enctype="multipart/form-data">
+
+    <div class="text-center">
+
+        <h1 class="display-4">
+            Órdenes de Servicio
+        </h1>
+
+
+        <input type="submit"
+               value="Buscar"
+               class="btn btn-secondary"
+               asp-page-handler="BtBuscar" />
+
+
+        @if (rolId == "1" || rolId == "2")
+        {
+            <input type="submit"
+                   value="Nuevo"
+                   class="btn btn-secondary"
+                   asp-page-handler="BtNuevo" />
+        }
+
+
+        @if (Model.Formulario)
+        {
+            <input type="submit"
+                   value="Guardar"
+                   class="btn btn-secondary"
+                   asp-page-handler="BtGuardar" />
+        }
+
+
+        <input id="flDocumento"
+               placeholder="Documento Cliente"
+               asp-for="@Model.Filtro!._Cita!._Cliente!.Documento" />
+
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+            @await Html.PartialAsync(
+                "/Pages/Emergentes/Mensajes.cshtml"
+            )
+        }
+
+
+        @if (Model.Formulario || Model.Borrar)
+        {
+            <input id="nmId"
+                   type="hidden"
+                   asp-for="@Model.Actual!.Id" />
+        }
+
+
+
+        @if (Model.Formulario)
+        {
+            <div>
+
+                <h3>
+                    Orden de Servicio
+                </h3>
+
+
+
+
+                <label>
+                    Cita Programada
+                </label>
+
+                <select id="nmCita"
+                        class="form-control"
+                        asp-for="@Model.Actual!.Cita">
+
+                    <option value="0">
+                        Seleccione una cita
+                    </option>
+
+                    @foreach (var cita in Model.Citas)
+                    {
+                        if (Model.Actual?.Cita == cita.Id)
+                        {
+                            <option value="@cita.Id"
+                                    selected>
+                                @cita._Cliente?.Documento -
+                                @cita._Cliente?.Nombre
+                                @cita._Cliente?.Apellido -
+                                @cita._Vehiculo?.Placa -
+                                @cita.Motivo
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@cita.Id">
+                                @cita._Cliente?.Documento -
+                                @cita._Cliente?.Nombre
+                                @cita._Cliente?.Apellido -
+                                @cita._Vehiculo?.Placa -
+                                @cita.Motivo
+                            </option>
+                        }
+                    }
+
+                </select>
+
+                <br />
+
+
+
+                <label>
+                    Vehículo
+                </label>
+
+                <select id="nmVehiculo"
+                        class="form-control"
+                        asp-for="@Model.Actual!.Vehiculo">
+
+                    <option value="0">
+                        Seleccione un vehículo
+                    </option>
+
+                    @foreach (var vehiculo in Model.Vehiculos)
+                    {
+                        if (Model.Actual?.Vehiculo == vehiculo.Id)
+                        {
+                            <option value="@vehiculo.Id"
+                                    selected>
+                                @vehiculo._Cliente?.Documento -
+                                @vehiculo._Cliente?.Nombre
+                                @vehiculo._Cliente?.Apellido -
+                                @vehiculo.Placa
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@vehiculo.Id">
+                                @vehiculo._Cliente?.Documento -
+                                @vehiculo._Cliente?.Nombre
+                                @vehiculo._Cliente?.Apellido -
+                                @vehiculo.Placa
+                            </option>
+                        }
+                    }
+
+                </select>
+
+                <br />
+
+
+
+
+                <label>
+                    Empleado Responsable
+                </label>
+
+
+                @if (rolId == "1")
+                {
+                    <select id="nmEmpleado"
+                            class="form-control"
+                            asp-for="@Model.Actual!.Empleado">
+
+                        <option value="0">
+                            Seleccione un empleado
+                        </option>
+
+                        @foreach (var empleado in Model.Empleados)
+                        {
+                            if (Model.Actual?.Empleado == empleado.Id)
+                            {
+                                <option value="@empleado.Id"
+                                        selected>
+                                    @empleado.Nombre
+                                    @empleado.Apellido
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@empleado.Id">
+                                    @empleado.Nombre
+                                    @empleado.Apellido
+                                </option>
+                            }
+                        }
+
+                    </select>
+                }
+
+
+                @if (rolId == "2")
+                {
+                    var empleadoActual =
+                        Model.Empleados
+                            .FirstOrDefault(
+                                x =>
+                                    x.Id ==
+                                    Model.Actual!.Empleado);
+
+                    <input type="text"
+                           class="form-control"
+                           value="@empleadoActual?.Nombre @empleadoActual?.Apellido"
+                           readonly />
+
+                    <input type="hidden"
+                           asp-for="@Model.Actual!.Empleado" />
+                }
+
+                <br />
+
+
+
+                <label>
+                    Estado de la Orden
+                </label>
+
+                <select id="nmEstado_Orden"
+                        class="form-control"
+                        asp-for="@Model.Actual!.Estado_Orden">
+
+                    <option value="0">
+                        Seleccione un estado
+                    </option>
+
+                    @foreach (var estado in Model.Estados_Ordenes)
+                    {
+                        if (Model.Actual?.Estado_Orden == estado.Id)
+                        {
+                            <option value="@estado.Id"
+                                    selected>
+                                @estado.Nombre_Estado
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@estado.Id">
+                                @estado.Nombre_Estado
+                            </option>
+                        }
+                    }
+
+                </select>
+
+                <br />
+
+
+                <label>
+                    Fecha de Ingreso
+                </label>
+
+                <input id="nmFecha_Ingreso"
+                       type="datetime-local"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Fecha_Ingreso"
+                       asp-format="{0:yyyy-MM-ddTHH:mm}" />
+
+                <br />
+
+
+
+
+                <label>
+                    Kilometraje de Ingreso
+                </label>
+
+                <input id="nmKilometraje_Ingreso"
+                       type="number"
+                       min="0"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Kilometraje_Ingreso" />
+
+                <br />
+
+
+
+                <label>
+                    Observaciones
+                </label>
+
+                <input id="nmObservaciones"
+                       class="form-control"
+                       asp-for="@Model.Actual!.Observaciones" />
+
+                <br />
+
+            </div>
+        }
+
+
+
+
+        @if (Model.Borrar && rolId == "1")
+        {
+            <div class="popup">
+
+                <div class="pp_del_inner">
+
+                    <h3>
+                        Mensaje
+                    </h3>
+
+                    <h4>
+                        ¿Desea borrar la orden de servicio?
+                    </h4>
+
+                    <h6>
+                        @Model.Actual?._Cita?._Cliente?.Documento -
+                        @Model.Actual?._Cita?._Cliente?.Nombre
+                        @Model.Actual?._Cita?._Cliente?.Apellido -
+                        @Model.Actual?._Vehiculo?.Placa
+                    </h6>
+
+
+                    <input type="submit"
+                           value="Cancelar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBuscar" />
+
+
+                    <input type="submit"
+                           value="Borrar"
+                           class="btn btn-danger"
+                           asp-page-handler="BtBorrar" />
+
+                </div>
+
+            </div>
+        }
+
+
+
+
+        @if (!Model.Formulario)
+        {
+            <div class="containers_vn panel panel-default"
+                 style="overflow-x:auto">
+
+                <table class="tb_data table table-striped table-bordered table-hover">
+
+                    <tr>
+
+                        <th>
+                            Cita
+                        </th>
+
+                        <th>
+                            Vehículo
+                        </th>
+
+                        <th>
+                            Empleado
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th>
+                            Fecha Ingreso
+                        </th>
+
+                        <th>
+                            Kilometraje
+                        </th>
+
+                        <th>
+                            Observaciones
+                        </th>
+
+                        <th>
+                            Acción
+                        </th>
+
+                    </tr>
+
+
+                    @if (Model.Lista != null)
+                    {
+                        foreach (var elemento in Model.Lista)
+                        {
+                            <tr>
+
+                                <td>
+                                    @if (elemento._Cita != null)
+                                    {
+                                        <span>
+                                            @elemento._Cita._Cliente?.Documento -
+                                            @elemento._Cita._Cliente?.Nombre
+                                            @elemento._Cita._Cliente?.Apellido -
+                                            @elemento._Cita.Motivo
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            Cita no encontrada
+                                        </span>
+                                    }
+                                </td>
+
+
+                                <td>
+                                    @elemento._Vehiculo?.Placa
+                                </td>
+
+
+                                <td>
+                                    @elemento._Empleado?.Nombre
+                                    @elemento._Empleado?.Apellido
+                                </td>
+
+
+                                <td>
+                                    @elemento._EstadoOrden?.Nombre_Estado
+                                </td>
+
+
+                                <td>
+                                    @elemento.Fecha_Ingreso.ToString(
+                                        "dd/MM/yyyy HH:mm")
+                                </td>
+
+
+                                <td>
+                                    @elemento.Kilometraje_Ingreso
+                                </td>
+
+
+                                <td>
+                                    @elemento.Observaciones
+                                </td>
+
+
+                                <td>
+
+                                    @if (rolId == "1" || rolId == "2")
+                                    {
+                                        <input type="submit"
+                                               value="Editar"
+                                               class="btn btn-secondary"
+                                               asp-page-handler="BtEditar"
+                                               asp-route-data="@elemento.Id" />
+                                    }
+
+
+                                    @if (rolId == "1")
+                                    {
+                                        <input type="submit"
+                                               value="Borrar"
+                                               class="btn btn-danger"
+                                               asp-page-handler="BtPregBorrar"
+                                               asp-route-data="@elemento.Id" />
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</form>
