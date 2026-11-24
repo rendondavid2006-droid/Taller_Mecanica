@@ -1,0 +1,162 @@
+﻿@page
+@model Estados_CitasModel
+
+@{
+    ViewData["Title"] = "Estados de Citas";
+}
+
+<form method="post">
+
+    <div class="text-center">
+
+        <h1 class="display-4">
+            Estados de Citas
+        </h1>
+
+        <input type="submit"
+               value="Buscar"
+               class="btn btn-secondary"
+               asp-page-handler="BtBuscar" />
+
+        <input type="submit"
+               value="Nuevo"
+               class="btn btn-secondary"
+               asp-page-handler="BtNuevo" />
+
+        @if (Model.Formulario)
+        {
+            <input type="submit"
+                   value="Guardar"
+                   class="btn btn-secondary"
+                   asp-page-handler="BtGuardar" />
+        }
+
+        <input placeholder="Nombre Estado"
+               asp-for="@Model.Filtro!.Nombre_Estado" />
+
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+            @await Html.PartialAsync(
+                "/Pages/Emergentes/Mensajes.cshtml"
+            )
+        }
+
+
+        @if (Model.Formulario || Model.Borrar)
+        {
+            <input type="hidden"
+                   asp-for="@Model.Actual!.Id" />
+        }
+
+
+        @if (Model.Formulario)
+        {
+            <div>
+
+                <h3>Estado de Cita</h3>
+
+                <label>Nombre Estado</label>
+
+                <input class="form-control"
+                       asp-for="@Model.Actual!.Nombre_Estado" />
+
+                <br />
+
+                <label>Descripcion</label>
+
+                <input class="form-control"
+                       asp-for="@Model.Actual!.Descripcion" />
+
+                <br />
+
+                <label>Estado</label>
+
+                <input asp-for="@Model.Actual!.Estado" />
+
+                <br />
+
+            </div>
+        }
+
+
+        @if (Model.Borrar)
+        {
+            <div class="popup">
+                <div class="pp_del_inner">
+
+                    <h3>Mensaje</h3>
+
+                    <h4>
+                        ¿Desea borrar la entidad...?
+                    </h4>
+
+                    <h6>
+                        @Model.Actual?.Nombre_Estado
+                    </h6>
+
+                    <input type="submit"
+                           value="Cancelar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBuscar" />
+
+                    <input type="submit"
+                           value="Borrar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBorrar" />
+
+                </div>
+            </div>
+        }
+
+
+        @if (!Model.Formulario)
+        {
+            <div class="containers_vn panel panel-default">
+
+                <table class="tb_data table table-striped table-bordered table-hover">
+
+                    <tr>
+                        <th>Nombre Estado</th>
+                        <th>Descripcion</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+
+                    @foreach (var elemento in Model.Lista)
+                    {
+                        <tr>
+
+                            <td>@elemento.Nombre_Estado</td>
+
+                            <td>@elemento.Descripcion</td>
+
+                            <td>@elemento.Estado</td>
+
+                            <td>
+
+                                <input type="submit"
+                                       value="Editar"
+                                       class="btn btn-secondary"
+                                       asp-page-handler="BtEditar"
+                                       asp-route-data="@elemento.Id" />
+
+                                <input type="submit"
+                                       value="Borrar"
+                                       class="btn btn-secondary"
+                                       asp-page-handler="BtPregBorrar"
+                                       asp-route-data="@elemento.Id" />
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</form>
