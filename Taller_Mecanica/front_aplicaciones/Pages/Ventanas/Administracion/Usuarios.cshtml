@@ -1,0 +1,168 @@
+@page
+@model UsuariosModel
+@{
+    ViewData["Title"] = "Usuarios";
+}
+<form method="post" enctype="multipart/form-data">
+    <div class="text-center">
+        <h1 class="display-4">Usuarios</h1>
+
+        <input type="submit"
+               value="Buscar"
+               class="btn btn-secondary"
+               asp-page-handler="BtBuscar" />
+
+        <input type="submit"
+               value="Nuevo"
+               class="btn btn-secondary"
+               asp-page-handler="BtNuevo" />
+
+        @if (Model.Formulario)
+        {
+            <input type="submit"
+                   value="Guardar"
+                   class="btn btn-secondary"
+                   asp-page-handler="BtGuardar" />
+        }
+
+        <input id="flNombre"
+               placeholder="Nombre Usuario"
+               asp-for="@Model.Filtro!.Nombre_Usuario" />
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+            @await Html.PartialAsync("/Pages/Emergentes/Mensajes.cshtml")
+        }
+
+        @if (Model.Formulario || Model.Borrar)
+        {
+            <input id="nmId"
+                   type="hidden"
+                   asp-for="@Model.Actual!.Id" />
+        }
+
+        @if (Model.Formulario)
+        {
+            <div>
+                <h3>Usuario</h3>
+
+                <label>Empleado</label>
+                <select id="nmEmpleado"
+                        class="form-control"
+                        asp-for="@Model.Actual!.Empleado">
+                    <option value="0">Seleccione un empleado</option>
+                    @foreach (var empleado in Model.Empleados)
+                    {
+                        if (Model.Actual?.Empleado == empleado.Id)
+                        {
+                            <option value="@empleado.Id" selected>
+                                @empleado.Documento - @empleado.Nombre @empleado.Apellido
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@empleado.Id">
+                                @empleado.Documento - @empleado.Nombre @empleado.Apellido
+                            </option>
+                        }
+                    }
+                </select>
+                <br />
+
+                <label>Nombre Usuario</label>
+                <input id="nmNombre_Usuario"
+                       asp-for="@Model.Actual!.Nombre_Usuario" />
+                <br />
+
+                <label>Contraseña</label>
+                <input id="nmContraseña"
+                       type="password"
+                       asp-for="@Model.Actual!.Contraseña" />
+                <br />
+
+                <label>Estado</label>
+                <input id="nmEstado"
+                       asp-for="@Model.Actual!.Estado" />
+                <br />
+
+                <label>Fecha Creacion</label>
+                <input id="nmFecha_Creacion"
+                       asp-for="@Model.Actual!.Fecha_Creacion" />
+                <br />
+            </div>
+        }
+
+        @if (Model.Borrar)
+        {
+            <div class="popup">
+                <div class="pp_del_inner">
+                    <h3>Mensaje</h3>
+                    <h4>¿Desea borrar la entidad...?</h4>
+                    <h6>@Model.Actual!.Nombre_Usuario</h6>
+
+                    <input type="submit"
+                           value="Cancelar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBuscar" />
+
+                    <input type="submit"
+                           value="Borrar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBorrar" />
+                </div>
+            </div>
+        }
+
+        @if (!Model.Formulario)
+        {
+            <div class="containers_vn panel panel-default">
+                <table class="tb_data table table-striped table-bordered table-hover">
+                    <tr>
+                        <th>Empleado</th>
+                        <th>Nombre Usuario</th>
+                        <th>Estado</th>
+                        <th>Fecha Creacion</th>
+                        <th>Acción</th>
+                    </tr>
+
+                    @if (Model.Lista != null)
+                    {
+                        foreach (var elemento in Model.Lista)
+                        {
+                            var empleado = Model.Empleados.FirstOrDefault(x => x.Id == elemento.Empleado);
+
+                            <tr>
+                                <td>
+                                    @if (empleado != null)
+                                    {
+                                        <span>@empleado.Documento - @empleado.Nombre @empleado.Apellido</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Empleado no encontrado</span>
+                                    }
+                                </td>
+                                <td>@elemento.Nombre_Usuario</td>
+                                <td>@elemento.Estado</td>
+                                <td>@elemento.Fecha_Creacion</td>
+                                <td>
+                                    <input type="submit"
+                                           value="Editar"
+                                           class="btn btn-secondary"
+                                           asp-page-handler="BtEditar"
+                                           asp-route-data="@elemento.Id" />
+
+                                    <input type="submit"
+                                           value="Borrar"
+                                           class="btn btn-secondary"
+                                           asp-page-handler="BtPregBorrar"
+                                           asp-route-data="@elemento.Id" />
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        }
+    </div>
+</form>
