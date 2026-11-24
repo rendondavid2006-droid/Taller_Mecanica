@@ -1,4 +1,4 @@
-﻿
+using System.Text.Json.Serialization;
 
 namespace libreria_aplicaciones.Entidades
 {
@@ -10,7 +10,9 @@ namespace libreria_aplicaciones.Entidades
         public int Nivel_Acceso { get; set; }
         public bool Estado { get; set; }
 
-        public List<Empleados>? Empleados { get; set; }
+        [JsonIgnore] public List<Permisos>? Permisos { get; set; }
+        [JsonIgnore] public List<Empleados>? Empleados { get; set; }
+        [JsonIgnore] public List<Usuarios_Clientes>? Usuarios_Clientes { get; set; }
 
     }
 }

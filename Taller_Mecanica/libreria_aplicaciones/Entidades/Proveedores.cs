@@ -1,4 +1,4 @@
-﻿
+using System.Text.Json.Serialization;
 
 namespace libreria_aplicaciones.Entidades
 {
@@ -11,6 +11,6 @@ namespace libreria_aplicaciones.Entidades
         public string? Correo { get; set; }
         public string? Direccion { get; set; }
 
-        public List<Compras>? Compras { get; set; }
+        [JsonIgnore] public List<Compras>? Compras { get; set; }
     }
 }

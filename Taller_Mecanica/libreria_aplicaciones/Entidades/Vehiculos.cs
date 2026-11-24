@@ -1,6 +1,5 @@
-﻿
-
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace libreria_aplicaciones.Entidades
 {
@@ -18,8 +17,8 @@ namespace libreria_aplicaciones.Entidades
         [ForeignKey("Cliente")] public Clientes? _Cliente { get; set; }
         [ForeignKey("Modelo")] public Modelos_Vehiculos? _Modelo { get; set; }
 
-        public List<Citas>? Citas { get; set; }
-        public List<Ordenes_Servicios>? Ordenes_Servicios { get; set; }
+        [JsonIgnore] public List<Citas>? Citas { get; set; }
+        [JsonIgnore] public List<Ordenes_Servicios>? Ordenes_Servicios { get; set; }
 
     }
 }

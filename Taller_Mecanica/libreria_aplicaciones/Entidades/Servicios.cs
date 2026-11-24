@@ -1,4 +1,4 @@
-﻿
+using System.Text.Json.Serialization;
 
 namespace libreria_aplicaciones.Entidades
 {
@@ -11,6 +11,8 @@ namespace libreria_aplicaciones.Entidades
         public DateTime Tiempo_Estimado { get; set; }
         public bool Estado { get; set; }
 
-        public List<Detalles_Ordenes_Servicios>? Detalles_Ordenes_Servicios { get; set; }
+        public string? Imagen { get; set; }
+
+        [JsonIgnore] public List<Detalles_Ordenes_Servicios>? Detalles_Ordenes_Servicios { get; set; }
     }
 }

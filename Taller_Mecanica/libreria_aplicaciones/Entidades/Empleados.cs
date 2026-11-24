@@ -1,6 +1,5 @@
-﻿
-
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace libreria_aplicaciones.Entidades
 {
@@ -17,8 +16,8 @@ namespace libreria_aplicaciones.Entidades
 
         [ForeignKey("Rol")] public Roles? _Rol { get; set; }
 
-        public List<Usuarios>? Usuarios { get; set; }
-        public List<Ordenes_Servicios>? Ordenes_Servicios { get; set; }
-        public List<Diagnosticos>? Diagnosticos { get; set; }
+        [JsonIgnore] public List<Usuarios>? Usuarios { get; set; }
+        [JsonIgnore] public List<Ordenes_Servicios>? Ordenes_Servicios { get; set; }
+        [JsonIgnore] public List<Diagnosticos>? Diagnosticos { get; set; }
     }
 }

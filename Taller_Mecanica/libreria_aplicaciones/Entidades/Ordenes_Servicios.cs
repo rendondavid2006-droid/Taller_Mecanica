@@ -1,6 +1,5 @@
-﻿
-
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace libreria_aplicaciones.Entidades
 {
@@ -22,9 +21,9 @@ namespace libreria_aplicaciones.Entidades
         [ForeignKey("Empleado")] public Empleados? _Empleado { get; set; }
         [ForeignKey("Estado_Orden")] public Estados_Ordenes? _EstadoOrden { get; set; }
 
-        public List<Diagnosticos>? Diagnosticos { get; set; }
-        public List<Detalles_Ordenes_Servicios>? Detalles_Ordenes_Servicios { get; set; }
-        public List<Detalles_Repuestos_Ordenes>? Detalles_Repuestos_Ordenes { get; set; }
-        public List<Facturas>? Facturas { get; set; }
+        [JsonIgnore] public List<Diagnosticos>? Diagnosticos { get; set; }
+        [JsonIgnore] public List<Detalles_Ordenes_Servicios>? Detalles_Ordenes_Servicios { get; set; }
+        [JsonIgnore] public List<Detalles_Repuestos_Ordenes>? Detalles_Repuestos_Ordenes { get; set; }
+        [JsonIgnore] public List<Facturas>? Facturas { get; set; }
     }
 }

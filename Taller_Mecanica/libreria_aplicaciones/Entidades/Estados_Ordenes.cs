@@ -1,4 +1,4 @@
-﻿
+using System.Text.Json.Serialization;
 
 namespace libreria_aplicaciones.Entidades
 {
@@ -10,6 +10,6 @@ namespace libreria_aplicaciones.Entidades
         public int Orden_Proceso { get; set; }
         public bool Estado { get; set; }
 
-        public List<Ordenes_Servicios>? Ordenes_Servicios { get; set; }
+        [JsonIgnore] public List<Ordenes_Servicios>? Ordenes_Servicios { get; set; }
     }
 }

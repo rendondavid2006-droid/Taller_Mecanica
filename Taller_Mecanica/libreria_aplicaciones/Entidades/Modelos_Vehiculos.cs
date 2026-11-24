@@ -1,6 +1,5 @@
-﻿
-
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace libreria_aplicaciones.Entidades
 {
@@ -16,6 +15,6 @@ namespace libreria_aplicaciones.Entidades
 
         [ForeignKey("Marca")] public Marcas? _Marca { get; set; }
 
-        public List<Vehiculos>? Vehiculos { get; set; }
+        [JsonIgnore] public List<Vehiculos>? Vehiculos { get; set; }
     }
 }
