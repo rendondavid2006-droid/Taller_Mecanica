@@ -1,0 +1,169 @@
+@page
+@model ComprasModel
+@{
+    ViewData["Title"] = "Compras";
+}
+<form method="post" enctype="multipart/form-data">
+    <div class="text-center">
+        <h1 class="display-4">Compras</h1>
+
+        <input type="submit"
+               value="Buscar"
+               class="btn btn-secondary"
+               asp-page-handler="BtBuscar" />
+
+        <input type="submit"
+               value="Nuevo"
+               class="btn btn-secondary"
+               asp-page-handler="BtNuevo" />
+
+        @if (Model.Formulario)
+        {
+            <input type="submit"
+                   value="Guardar"
+                   class="btn btn-secondary"
+                   asp-page-handler="BtGuardar" />
+        }
+
+        <input id="flNumeroFactura"
+               placeholder="Num. Factura"
+               asp-for="@Model.Filtro!.Numero_Factura_Proveedor" />
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+            @await Html.PartialAsync("/Pages/Emergentes/Mensajes.cshtml")
+        }
+
+        @if (Model.Formulario || Model.Borrar)
+        {
+            <input id="nmId"
+                   type="hidden"
+                   asp-for="@Model.Actual!.Id" />
+        }
+
+        @if (Model.Formulario)
+        {
+            <div>
+                <h3>Compra</h3>
+
+                <label>Proveedor</label>
+                <select id="nmProveedor"
+                        class="form-control"
+                        asp-for="@Model.Actual!.Proveedor">
+                    <option value="0">Seleccione un proveedor</option>
+                    @foreach (var proveedor in Model.Proveedores)
+                    {
+                        if (Model.Actual?.Proveedor == proveedor.Id)
+                        {
+                            <option value="@proveedor.Id" selected>
+                                @proveedor.Nit - @proveedor.Nombre_Proveedor
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@proveedor.Id">
+                                @proveedor.Nit - @proveedor.Nombre_Proveedor
+                            </option>
+                        }
+                    }
+                </select>
+                <br />
+
+                <label>Fecha Compra</label>
+                <input id="nmFecha_Compra"
+                       asp-for="@Model.Actual!.Fecha_Compra" />
+                <br />
+
+                <label>Numero Factura</label>
+                <input id="nmNumero_Factura_Proveedor"
+                       asp-for="@Model.Actual!.Numero_Factura_Proveedor" />
+                <br />
+
+                <label>Total Compra</label>
+                <input id="nmTotal_Compra"
+                       asp-for="@Model.Actual!.Total_Compra" />
+                <br />
+
+                <label>Estado</label>
+                <select id="nmEstado" class="form-control" asp-for="@Model.Actual!.Estado">
+                    <option value="">Seleccione un estado</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Recibida">Recibida</option>
+                    <option value="Pagada">Pagada</option>
+                    <option value="Cancelada">Cancelada</option>
+                </select>
+                <br />
+            </div>
+        }
+
+        @if (Model.Borrar)
+        {
+            <div class="popup">
+                <div class="pp_del_inner">
+                    <h3>Mensaje</h3>
+                    <h4>¿Desea borrar la entidad...?</h4>
+                    <h6>
+                        @Model.Actual!.Numero_Factura_Proveedor,
+                        @Model.Actual!.Total_Compra
+                    </h6>
+                    <input type="submit"
+                           value="Cancelar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBuscar" />
+                    <input type="submit"
+                           value="Borrar"
+                           class="btn btn-secondary"
+                           asp-page-handler="BtBorrar" />
+                </div>
+            </div>
+        }
+
+        @if (!Model.Formulario)
+        {
+            <div class="containers_vn panel panel-default">
+                <table class="tb_data table table-striped table-bordered table-hover">
+                    <tr>
+                        <th>Proveedor</th>
+                        <th>Fecha Compra</th>
+                        <th>Numero Factura</th>
+                        <th>Total Compra</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                    @if (Model.Lista != null)
+                    {
+                        foreach (var elemento in Model.Lista)
+                        {
+                            var proveedor = Model.Proveedores
+                                .FirstOrDefault(x => x.Id == elemento.Proveedor);
+
+                            <tr>
+                                <td>
+                                    @(proveedor != null
+                                        ? $"{proveedor.Nit} - {proveedor.Nombre_Proveedor}"
+                                        : $"Proveedor #{elemento.Proveedor}")
+                                </td>
+                                <td>@elemento.Fecha_Compra</td>
+                                <td>@elemento.Numero_Factura_Proveedor</td>
+                                <td>@elemento.Total_Compra</td>
+                                <td>@elemento.Estado</td>
+                                <td>
+                                    <input type="submit"
+                                           value="Editar"
+                                           class="btn btn-secondary"
+                                           asp-page-handler="BtEditar"
+                                           asp-route-data="@elemento.Id" />
+                                    <input type="submit"
+                                           value="Borrar"
+                                           class="btn btn-secondary"
+                                           asp-page-handler="BtPregBorrar"
+                                           asp-route-data="@elemento.Id" />
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        }
+    </div>
+</form>
