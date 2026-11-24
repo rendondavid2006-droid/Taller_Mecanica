@@ -1,0 +1,226 @@
+@page
+@model Detalles_Repuestos_OrdenesModel
+@{
+    ViewData["Title"] = "Detalles_Repuestos_Ordenes";
+}
+<form method="post"
+    enctype="multipart/form-data">
+
+    <div class="text-center">
+        <h1 class="display-4">Detalles_Repuestos_Ordenes</h1>
+
+        <input type="submit"
+            value="Buscar"
+            class="btn btn-secondary"
+            asp-page-handler="BtBuscar"/>
+        <input type="submit"
+            value="Nuevo"
+            class="btn btn-secondary"
+            asp-page-handler="BtNuevo"/>
+        @if (Model.Formulario)
+        {
+            <input type="submit"
+                value="Guardar"
+                class="btn btn-secondary"
+                asp-page-handler="BtGuardar"/>
+        }
+        <input id="flNombre"
+            placeholder="Nombre Repuesto"
+               asp-for="@Model.Filtro!._Repuesto!.Nombre_Repuesto" />
+
+        @if (ViewData.ContainsKey("Mensaje"))
+        {
+          @await Html.PartialAsync("/Pages/Emergentes/Mensajes.cshtml");
+        }
+
+        @if (Model.Formulario || Model.Borrar)
+        {
+            <input id="nmId"
+                type="hidden"
+                asp-for="@Model.Actual!.Id" />
+        }
+
+        @if (Model.Formulario)
+        {
+            <div>
+                <h3>Detalles Repuestos</h3>
+
+                <label>
+                    Orden
+                </label>
+                <select id="nmOrden"
+                        asp-for="@Model.Actual!.Orden">
+                    <option value="0">Seleccione una orden</option>
+                    @foreach (var orden in Model.Ordenes)
+                    {
+                        if (Model.Actual?.Orden == orden.Id)
+                        {
+                            <option value="@orden.Id" selected>
+                                @orden._Cita?._Cliente?.Documento - @orden._Cita?._Cliente?.Nombre @orden._Cita?._Cliente?.Apellido - @orden._Vehiculo?.Placa
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@orden.Id">
+                                @orden._Cita?._Cliente?.Documento - @orden._Cita?._Cliente?.Nombre @orden._Cita?._Cliente?.Apellido - @orden._Vehiculo?.Placa
+                            </option>
+                        }
+                    }
+                </select>
+                <br/>
+
+                <label>
+                    Repuesto
+                </label>
+                <select id="nmRepuesto"
+                        asp-for="@Model.Actual!.Repuesto">
+                    <option value="0">Seleccione un repuesto</option>
+                    @foreach (var repuesto in Model.Repuestos)
+                    {
+                        if (Model.Actual?.Repuesto == repuesto.Id)
+                        {
+                            <option value="@repuesto.Id" selected>
+                                @repuesto.Nombre_Repuesto
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@repuesto.Id">
+                                @repuesto.Nombre_Repuesto
+                            </option>
+                        }
+                    }
+                </select>
+                <br />
+
+                <label>
+                    Cantidad
+                </label>
+                <input id="nmCantidad"
+                    type="number"
+                    min="1"
+                    asp-for="@Model.Actual!.Cantidad"
+                    oninput="calcularSubtotalRepuesto()" />
+                <br />
+
+                <label>
+                    Precio Unitario
+                </label>
+                <input id="nmPrecio_Unitario"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    asp-for="@Model.Actual!.Precio_Unitario"
+                    oninput="calcularSubtotalRepuesto()" />
+                <br />
+
+                <label>
+                    Subtotal
+                </label>
+                <input id="nmSubtotal"
+                       type="number"
+                       min="0"
+                       step="0.01"
+                       asp-for="@Model.Actual!.Subtotal"
+                       readonly />
+                <br />
+            </div>
+        }
+
+        @if (Model.Borrar)
+        {
+            <div class="popup">
+                <div class="pp_del_inner">
+                    <h3>Mensaje</h3>
+
+                    <h4>
+                        ¿Desea borrar la entidad...?
+                    </h4>
+                    <h6>
+                        @Model.Actual!._Repuesto!.Nombre_Repuesto
+                    </h6>
+                    <input type="submit"
+                        value="Cancelar"
+                        class="btn btn-secondary"
+                        asp-page-handler="BtBuscar" />
+                    <input type="submit"
+                        value="Borrar"
+                        class="btn btn-secondary"
+                        asp-page-handler="BtBorrar" />
+                </div>
+            </div>
+        }
+
+        @if (!Model.Formulario)
+        {
+            <div class="containers_vn panel panel-default">
+                <table class="tb_data table table-striped table-bordered table-hover">
+                    <tr>
+                        <th>Orden</th>
+                        <th>Repuesto</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Subtotal</th>
+                        <th>Acción</th>
+                    </tr>
+                    @if (Model != null && Model.Lista != null)
+                    {
+                        foreach (var elemento in Model.Lista)
+                        {
+                            var orden = Model.Ordenes.FirstOrDefault(x => x.Id == elemento.Orden);
+                            var repuesto = Model.Repuestos.FirstOrDefault(x => x.Id == elemento.Repuesto);
+
+                            <tr>
+                                <td>
+                                    @if (orden != null)
+                                    {
+                                        <span>@orden._Cita?._Cliente?.Documento - @orden._Cita?._Cliente?.Nombre @orden._Cita?._Cliente?.Apellido - @orden._Vehiculo?.Placa</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Orden no disponible</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (repuesto != null)
+                                    {
+                                        @repuesto.Nombre_Repuesto
+                                    }
+                                    else
+                                    {
+                                        <span>Repuesto #@elemento.Repuesto</span>
+                                    }
+                                </td>
+                                <td>@elemento.Cantidad</td>
+                                <td>@elemento.Precio_Unitario</td>
+                                <td>@elemento.Subtotal</td>
+                                <td>
+                                    <input type="submit"
+                                        value="Editar"
+                                        class="btn btn-secondary"
+                                        asp-page-handler="BtEditar"
+                                        asp-route-data="@elemento.Id" />
+                                    <input type="submit"
+                                        value="Borrar"
+                                        class="btn btn-secondary"
+                                        asp-page-handler="BtPregBorrar"
+                                        asp-route-data="@elemento.Id" />
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        }
+
+    </div>
+</form>
+
+<script>
+    function calcularSubtotalRepuesto() {
+        const cantidad = parseFloat(document.getElementById("nmCantidad")?.value || "0");
+        const precio = parseFloat(document.getElementById("nmPrecio_Unitario")?.value || "0");
+        const subtotal = document.getElementById("nmSubtotal");
+        if (subtotal) subtotal.value = (cantidad * precio).toFixed(2);
+    }
+</script>
